@@ -9,21 +9,56 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     trim: true
   },
-  name: {
+  full_name: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   role: {
     type: String,
     enum: ['student', 'teacher', 'admin'],
-    default: 'student'
+    required: true
   },
+  
+  // Поля для студентов
+  student_id: {
+    type: String,
+    sparse: true // Индекс только для существующих значений
+  },
+  faculty: {
+    type: String,
+    required: function() { return this.role === 'student'; }
+  },
+  course: {
+    type: Number,
+    min: 1,
+    max: 5,
+    required: function() { return this.role === 'student'; }
+  },
+  group: {
+    type: String,
+    required: function() { return this.role === 'student'; }
+  },
+  
+  // Поля для преподавателей
+  department: {
+    type: String,
+    required: function() { return this.role === 'teacher'; }
+  },
+  subjects: {
+    type: [String],
+    default: []
+  },
+  
+  // Геймификация (только для студентов)
   student_data: {
     points: { type: Number, default: 0 },
     level: { type: Number, default: 1 },
     badges: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Badge' }],
     streak_days: { type: Number, default: 0 }
   },
+  
+  // Участие в голосованиях
   polls_participated: [{ 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Poll' 
@@ -32,6 +67,7 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'Poll' 
   }],
+  
   created_at: {
     type: Date,
     default: Date.now
@@ -43,5 +79,32 @@ const userSchema = new mongoose.Schema({
 // Индексы для быстрого поиска
 userSchema.index({ email: 1 });
 userSchema.index({ role: 1 });
+userSchema.index({ student_id: 1 }, { sparse: true });
+userSchema.index({ faculty: 1 }, { sparse: true });
+userSchema.index({ department: 1 }, { sparse: true });
+
+// Метод для получения публичной информации о пользователе
+userSchema.methods.toPublicJSON = function() {
+  const obj = {
+    id: this._id,
+    email: this.email,
+    full_name: this.full_name,
+    role: this.role,
+    created_at: this.created_at
+  };
+  
+  if (this.role === 'student') {
+    obj.student_id = this.student_id;
+    obj.faculty = this.faculty;
+    obj.course = this.course;
+    obj.group = this.group;
+    obj.student_data = this.student_data;
+  } else if (this.role === 'teacher') {
+    obj.department = this.department;
+    obj.subjects = this.subjects;
+  }
+  
+  return obj;
+};
 
 module.exports = mongoose.model('User', userSchema);

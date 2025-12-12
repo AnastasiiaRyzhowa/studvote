@@ -1,1 +1,23 @@
+
+# Cursor AI
+
+.cursor/
+
+.cursorrules
+
+# Node
+
 node_modules/
+
+.env
+
+# OS
+
+.DS_Store
+
+# Build
+
+client/build/
+
+server/dist/
+
