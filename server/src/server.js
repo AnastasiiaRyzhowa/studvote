@@ -19,7 +19,12 @@ app.use(express.json());
 
 // Роуты
 const authRoutes = require('./routes/authRoutes');
+const pollRoutes = require('./routes/pollRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+
 app.use('/api/auth', authRoutes);
+app.use('/api/polls', pollRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

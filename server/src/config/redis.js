@@ -16,19 +16,19 @@ const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379', {
 });
 
 redis.on('connect', () => {
-  console.log('✅ Redis подключен успешно');
+  console.log('Redis подключен успешно');
 });
 
 redis.on('error', (err) => {
-  console.error('❌ Ошибка Redis:', err.message);
+  console.error('Ошибка Redis:', err.message);
 });
 
 redis.on('ready', () => {
-  console.log('✅ Redis готов к работе');
+  console.log('Redis готов к работе');
 });
 
 redis.on('reconnecting', () => {
-  console.log('🔄 Переподключение к Redis...');
+  console.log('Переподключение к Redis...');
 });
 
 module.exports = redis;

@@ -23,7 +23,8 @@
     "nodemailer": "^7.0.11",
     "qrcode": "^1.5.4",
     "redis": "^5.10.0",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
