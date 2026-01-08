@@ -1,177 +1,402 @@
 const mongoose = require('mongoose');
 
-// Схема для вариантов ответа
-const optionSchema = new mongoose.Schema({
-  text: {
-    type: String,
-    trim: true,
-    maxlength: 500
-  },
-  votes: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-  percentage: {
-    type: Number,
-    default: 0,
-    min: 0,
-    max: 100
-  },
-  order: {
-    type: Number,
-    default: 0
-  }
-}, { _id: false });
-
-// Основная схема опроса
-const pollSchema = new mongoose.Schema({
-  creator_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-    index: true
-  },
+const PollSchema = new mongoose.Schema({
+  // ==================== ОСНОВНОЕ ====================
   title: {
     type: String,
     required: true,
-    trim: true,
-    minlength: 5,
-    maxlength: 200
+    trim: true
   },
   description: {
     type: String,
-    trim: true,
-    maxlength: 2000
+    default: ''
   },
   type: {
     type: String,
-    enum: ['single', 'multiple', 'rating', 'form'],
-    required: true,
-    default: 'single'
+    enum: ['single', 'multiple', 'rating', 'form', 'topic', 'teacher', 'subject', 'organization', 'custom'],
+    default: 'custom'
+  },
+  pollType: {
+    type: String,
+    enum: ['subject_feedback', 'teacher_feedback', 'class_organization', 'custom'],
+    required: false
+  },
+  
+  // ==================== ВАРИАНТЫ ОТВЕТОВ (для simple polls) ====================
+  options: [{
+    text: {
+      type: String,
+      required: true
+    },
+    votes: {
+      type: Number,
+      default: 0
+    },
+    voters: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }]
+  }],
+  
+  // Дополнительные настройки для опросов
+  max_choices: {
+    type: Number,
+    default: null // Для multiple choice
+  },
+  is_anonymous: {
+    type: Boolean,
+    default: false
+  },
+  show_results: {
+    type: String,
+    enum: ['immediate', 'after_vote', 'after_end'],
+    default: 'immediate'
   },
   visibility: {
     type: String,
-    enum: ['public', 'group', 'faculty'],
-    default: 'public',
-    index: true
+    enum: ['public', 'group', 'faculty', 'program'],
+    default: 'public'
   },
-  options: {
-    type: [optionSchema],
-    default: [],
-    validate: {
-      validator: function(options) {
-        // Для форм options не используется
-        if (this.type === 'form') {
-          return true;
-        }
-        return options && options.length >= 2 && options.length <= 20;
-      },
-      message: 'Опрос должен иметь от 2 до 20 вариантов ответа'
-    }
-  },
-  questions: {
-    type: [{
-      id: {
-        type: String
-      },
-      text: {
-        type: String
-      },
-      type: {
-        type: String,
-        enum: ['single', 'multiple', 'rating', 'text']
-      },
-      required: {
-        type: Boolean,
-        default: false
-      },
-      options: [{
-        type: String
-      }],
-      max_choices: {
-        type: Number,
-        default: 1
-      }
-    }],
-    default: []
-  },
-  total_votes: {
+  reward_points: {
     type: Number,
     default: 0,
     min: 0
   },
-  voted_users: [{
+  minResponsesForResults: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  
+  // ==================== ПРИВЯЗКА К УЧЕБНОМУ ПРОЦЕССУ ====================
+  subject_id: {
+    type: String, // ID из RUZ
+    default: null
+  },
+  subject_name: {
+    type: String,
+    default: null
+  },
+  teacher_id: {
+    type: String, // ID из RUZ
+    default: null
+  },
+  teacher_name: {
+    type: String,
+    default: null
+  },
+  topic_name: {
+    type: String, // Название темы (для type='topic')
+    default: null
+  },
+  lessonContext: {
+    lessonId: String,
+    subject: String,
+    teacher: String,
+    date: Date,
+    room: String,
+    topic: String,
+    lessonType: String,
+    time: String
+  },
+  lesson_date: {
+    type: Date, // Дата конкретной пары (для type='organization')
+    default: null
+  },
+  lesson_time: {
+    type: String, // "10:10-11:40"
+    default: null
+  },
+  
+  // ==================== СОЗДАТЕЛЬ ====================
+  creator_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    required: true
+  },
+  creator_role: {
+    type: String,
+    enum: ['student', 'teacher', 'admin'],
+    default: 'student'
+  },
+  
+  // Контекст создателя (откуда опрос)
+  source_faculty: String,
+  source_program: String,
+  source_course: Number,
+  source_group: String,
+  
+  // ==================== ТАРГЕТИНГ (кому показывать) ====================
+  target_groups: [{
+    type: String // group_id из RUZ
   }],
+  target_faculties: [{
+    type: String // 'fit', 'fmeo', 'feb'
+  }],
+  target_programs: [{
+    type: String // 'devops', 'data-science'
+  }],
+  target_courses: [{
+    type: Number // 1, 2, 3, 4
+  }],
+  
+  // ==================== ВОПРОСЫ ====================
+  questions: [{
+    id: {
+      type: mongoose.Schema.Types.Mixed,
+      required: true
+    },
+    text: {
+      type: String,
+      required: true
+    },
+    type: {
+      type: String,
+      enum: [
+        'rating',
+        'single_choice',
+        'multiple_choice',
+        'binary',
+        'text',
+        // обратная совместимость
+        'rating_1_5',
+        'yes_no',
+        'multiple_choice_old',
+        'text_long',
+        'text_short'
+      ],
+      default: 'text'
+    },
+    options: [mongoose.Schema.Types.Mixed], // Для multiple_choice
+    scale: mongoose.Schema.Types.Mixed, // число звезд или массив подписей
+    labels: {
+      min: String,
+      max: String
+    },
+    required: {
+      type: Boolean,
+      default: true
+    },
+    maxLength: {
+      type: Number,
+      default: null
+    },
+    followUp: mongoose.Schema.Types.Mixed // условные вопросы/branching
+  }],
+  
+  // ==================== ОТВЕТЫ С МЕТАДАННЫМИ ДЛЯ СРЕЗОВ ====================
   responses: [{
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true
     },
-    answers: {
-      type: mongoose.Schema.Types.Mixed
+    
+    // Сами ответы (гибкая структура)
+    answers: mongoose.Schema.Types.Mixed, 
+    raw_responses: mongoose.Schema.Types.Mixed,
+    // Примеры:
+    // Для одного вопроса: answers: 5
+    // Для нескольких: answers: { q1: 5, q2: 4, q3: "yes" }
+    
+    // ============ МЕТАДАННЫЕ ДЛЯ СРЕЗОВ (КРИТИЧНО!) ============
+    user_faculty: {
+      type: String,
+      required: true
     },
-    created_at: {
+    user_faculty_name: {
+      type: String,
+      required: true
+    },
+    user_program: {
+      type: String,
+      required: true
+    },
+    user_program_name: {
+      type: String,
+      required: true
+    },
+    user_course: {
+      type: Number,
+      required: true
+    },
+    user_group: {
+      type: String,
+      required: true
+    },
+    user_group_name: {
+      type: String,
+      required: true
+    },
+    
+    submitted_at: {
       type: Date,
       default: Date.now
     }
   }],
-  qr_code: {
-    type: String
+  
+  // ==================== СТАТУС ====================
+  status: {
+    type: String,
+    enum: ['draft', 'active', 'completed'],
+    default: 'active'
   },
   start_date: {
     type: Date,
-    required: true,
     default: Date.now
   },
   end_date: {
     type: Date,
-    required: true,
-    validate: {
-      validator: function(endDate) {
-        return endDate > this.start_date;
-      },
-      message: 'Дата окончания должна быть позже даты начала'
-    }
+    required: true
   },
-  status: {
-    type: String,
-    enum: ['draft', 'active', 'completed'],
-    default: 'draft',
-    index: true
+  
+  // ==================== СТАТИСТИКА ====================
+  total_votes: {
+    type: Number,
+    default: 0
   },
-  created_at: {
-    type: Date,
-    default: Date.now
-  }
+  
+  // Кэш средних оценок (обновляется при новом голосе)
+  cached_analytics: {
+    overall_average: Number,
+    by_faculty: mongoose.Schema.Types.Mixed,
+    by_program: mongoose.Schema.Types.Mixed,
+    by_course: mongoose.Schema.Types.Mixed,
+    last_updated: Date
+  },
+  
+  // ==================== СОВМЕСТИМОСТЬ СО СТАРОЙ СИСТЕМОЙ ====================
+  // Оставляем для обратной совместимости
+  voted_users: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }]
+  
 }, {
-  timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
+  timestamps: true
 });
 
-// Составной индекс для эффективного поиска активных опросов
-pollSchema.index({ status: 1, start_date: 1, end_date: 1 });
+// ==================== МЕТОДЫ ====================
 
-// Индекс для быстрого поиска опросов пользователя
-pollSchema.index({ creator_id: 1, created_at: -1 });
+// Проверка: может ли пользователь видеть этот опрос
+PollSchema.methods.isVisibleTo = function(user) {
+  // Если таргетинг не задан - показываем всем
+  if (this.target_groups.length === 0 &&
+      this.target_faculties.length === 0 &&
+      this.target_programs.length === 0 &&
+      this.target_courses.length === 0) {
+    return true;
+  }
+  
+  // Проверяем группу
+  if (this.target_groups.length > 0 && user.group_id && this.target_groups.includes(user.group_id.toString())) {
+    return true;
+  }
+  
+  // Проверяем факультет
+  if (this.target_faculties.length > 0 && this.target_faculties.includes(user.faculty)) {
+    return true;
+  }
+  
+  // Проверяем программу
+  if (this.target_programs.length > 0 && this.target_programs.includes(user.program)) {
+    return true;
+  }
+  
+  // Проверяем курс
+  if (this.target_courses.length > 0 && this.target_courses.includes(user.course)) {
+    return true;
+  }
+  
+  return false;
+};
 
-// Виртуальное поле для подсчета участников
-pollSchema.virtual('participants_count').get(function() {
-  return this.voted_users ? this.voted_users.length : 0;
-});
+// Проверка: голосовал ли пользователь
+PollSchema.methods.hasVoted = function(userId) {
+  return this.responses.some(r => r.user_id.toString() === userId.toString());
+};
 
-// Виртуальное поле для проверки завершенности
-pollSchema.virtual('is_ended').get(function() {
-  return new Date() > this.end_date;
-});
+// Добавить голос
+PollSchema.methods.addVote = async function(userId, answers, userMetadata) {
+  // Проверка дубликата
+  if (this.hasVoted(userId)) {
+    throw new Error('Вы уже проголосовали в этом опросе');
+  }
+  
+  // Для обычных опросов (single, multiple, rating) - обновляем счетчики в options
+  if (this.options && this.options.length > 0 && this.type !== 'form') {
+    const selectedIndices = Array.isArray(answers) ? answers : [answers];
+    
+    selectedIndices.forEach(index => {
+      if (this.options[index]) {
+        this.options[index].votes = (this.options[index].votes || 0) + 1;
+        if (!this.options[index].voters) {
+          this.options[index].voters = [];
+        }
+        this.options[index].voters.push(userId);
+      }
+    });
+  }
+  
+  // Добавляем ответ с метаданными
+  this.responses.push({
+    user_id: userId,
+    answers: answers,
+    
+    // Метаданные для срезов (с проверками на undefined)
+    user_faculty: userMetadata?.faculty || 'unknown',
+    user_faculty_name: userMetadata?.faculty_name || userMetadata?.faculty || 'unknown',
+    user_program: userMetadata?.program || 'unknown',
+    user_program_name: userMetadata?.program_name || userMetadata?.program || 'unknown',
+    user_course: userMetadata?.course || 0,
+    user_group: userMetadata?.group_id ? userMetadata.group_id.toString() : (userMetadata?.group || 'unknown'),
+    user_group_name: userMetadata?.group_name || userMetadata?.group || 'unknown',
+    
+    submitted_at: new Date()
+  });
+  
+  // Для обратной совместимости
+  if (!this.voted_users) {
+    this.voted_users = [];
+  }
+  this.voted_users.push(userId);
+  
+  this.total_votes = this.responses.length;
+  
+  await this.save();
+  
+  // Обновляем кэш аналитики (асинхронно)
+  setImmediate(() => {
+    this.updateAnalyticsCache().catch(err => {
+      console.error('Error updating analytics cache:', err);
+    });
+  });
+  
+  return this;
+};
 
-/**
- * Проверяет, активен ли опрос в данный момент
- * @returns {boolean}
- */
-pollSchema.methods.isActive = function() {
+// Обновить кэш аналитики
+PollSchema.methods.updateAnalyticsCache = async function() {
+  try {
+    const analytics = require('../services/analyticsService');
+    const result = await analytics.analyzePollResults(this._id);
+    
+    this.cached_analytics = {
+      overall_average: result.overall.average,
+      by_faculty: result.byFaculty,
+      by_program: result.byProgram,
+      by_course: result.byCourse,
+      last_updated: new Date()
+    };
+    
+    await this.save();
+  } catch (error) {
+    console.error('Error in updateAnalyticsCache:', error);
+  }
+};
+
+// Проверка: активен ли опрос
+PollSchema.methods.isActive = function() {
   const now = new Date();
   return (
     this.status === 'active' &&
@@ -180,152 +405,21 @@ pollSchema.methods.isActive = function() {
   );
 };
 
-/**
- * Проверяет, может ли пользователь голосовать
- * @param {ObjectId} userId - ID пользователя
- * @returns {boolean}
- */
-pollSchema.methods.canVote = function(userId) {
-  // Проверяем активность опроса
+// Проверка: может ли пользователь голосовать (для обратной совместимости)
+PollSchema.methods.canVote = function(userId) {
   if (!this.isActive()) {
     return false;
   }
   
-  // Проверяем, не голосовал ли уже пользователь
-  if (!this.voted_users || !Array.isArray(this.voted_users)) {
-    return true;
-  }
-  
-  const hasVoted = this.voted_users.some(
-    votedUserId => votedUserId.toString() === userId.toString()
-  );
-  
-  return !hasVoted;
+  return !this.hasVoted(userId);
 };
 
-/**
- * Пересчитывает проценты для всех вариантов ответа
- * @returns {Promise<Poll>}
- */
-pollSchema.methods.calculateResults = async function() {
-  if (!this.options || !Array.isArray(this.options)) {
-    return this;
-  }
-  
-  if (this.total_votes === 0) {
-    // Если нет голосов, устанавливаем все проценты в 0
-    this.options.forEach(option => {
-      option.percentage = 0;
-    });
-  } else {
-    // Вычисляем процент для каждого варианта
-    this.options.forEach(option => {
-      option.percentage = Math.round((option.votes / this.total_votes) * 100 * 100) / 100;
-    });
-  }
-  
-  return this.save();
-};
+// ==================== ИНДЕКСЫ ====================
+PollSchema.index({ status: 1, end_date: 1 });
+PollSchema.index({ creator_id: 1 });
+PollSchema.index({ 'target_groups': 1 });
+PollSchema.index({ subject_id: 1 });
+PollSchema.index({ teacher_id: 1 });
+PollSchema.index({ type: 1 });
 
-/**
- * Обновляет статус опроса на основе текущей даты
- * @returns {Promise<Poll>}
- */
-pollSchema.methods.updateStatus = async function() {
-  const now = new Date();
-  
-  if (this.status === 'draft') {
-    return this;
-  }
-  
-  if (now < this.start_date) {
-    this.status = 'draft';
-  } else if (now >= this.start_date && now <= this.end_date) {
-    this.status = 'active';
-  } else {
-    this.status = 'completed';
-  }
-  
-  return this.save();
-};
-
-/**
- * Добавляет голос пользователя
- * @param {ObjectId} userId - ID пользователя
- * @param {Array<Number>} optionIndices - Индексы выбранных вариантов
- * @returns {Promise<Poll>}
- */
-pollSchema.methods.addVote = async function(userId, optionIndices) {
-  // Проверяем возможность голосования
-  if (!this.canVote(userId)) {
-    throw new Error('Голосование невозможно');
-  }
-  
-  // Инициализируем массивы если они не существуют
-  if (!this.voted_users) {
-    this.voted_users = [];
-  }
-  if (!this.options) {
-    this.options = [];
-  }
-  
-  // Валидация индексов
-  const invalidIndices = optionIndices.filter(
-    index => index < 0 || index >= this.options.length
-  );
-  
-  if (invalidIndices.length > 0) {
-    throw new Error('Недопустимые индексы вариантов');
-  }
-  
-  // Проверка типа опроса
-  if (this.type === 'single' && optionIndices.length > 1) {
-    throw new Error('Для опроса с единственным выбором можно выбрать только один вариант');
-  }
-  
-  // Добавляем пользователя в список проголосовавших
-  this.voted_users.push(userId);
-  
-  // Увеличиваем счетчики голосов
-  optionIndices.forEach(index => {
-    this.options[index].votes += 1;
-  });
-  
-  // Увеличиваем общий счетчик
-  this.total_votes += 1;
-  
-  // Пересчитываем проценты
-  await this.calculateResults();
-  
-  return this;
-};
-
-/**
- * Middleware: Автоматическое обновление статуса перед сохранением
- */
-pollSchema.pre('save', async function() {
-  if (this.isModified('start_date') || this.isModified('end_date')) {
-    const now = new Date();
-    
-    if (this.status !== 'draft') {
-      if (now < this.start_date) {
-        this.status = 'draft';
-      } else if (now >= this.start_date && now <= this.end_date) {
-        this.status = 'active';
-      } else {
-        this.status = 'completed';
-      }
-    }
-  }
-});
-
-// Включаем виртуальные поля в JSON
-pollSchema.set('toJSON', { virtuals: true });
-pollSchema.set('toObject', { virtuals: true });
-
-module.exports = mongoose.model('Poll', pollSchema);
-
-
-
-
-
+module.exports = mongoose.model('Poll', PollSchema);

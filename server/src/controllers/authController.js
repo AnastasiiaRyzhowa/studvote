@@ -7,11 +7,15 @@ const {
   USER_ROLES, 
   CODE_EXPIRATION,
   JWT_EXPIRATION,
-  FACULTIES,
-  COURSES,
-  GROUPS,
   DEPARTMENTS
 } = require('../config/constants');
+const {
+  getStructure,
+  findFaculty,
+  findProgram,
+  findCourse,
+  findGroup
+} = require('../services/academicStructureService');
 
 /**
  * Определяет роль пользователя по email
@@ -195,7 +199,7 @@ exports.verifyCode = async (req, res) => {
  */
 exports.register = async (req, res) => {
   try {
-    const { tempToken, full_name, faculty, course, group, department } = req.body;
+    const { tempToken, full_name, facultyId, programId, course, groupId, department } = req.body;
 
     // Валидация tempToken
     if (!tempToken) {
@@ -247,20 +251,34 @@ exports.register = async (req, res) => {
 
     // Валидация специфичных для роли полей
     if (role === USER_ROLES.STUDENT) {
-      // Студент
-      if (!faculty || !FACULTIES.includes(faculty)) {
+      // Студент: валидация иерархии из RUZ
+      const structure = await getStructure();
+      const faculty = findFaculty(structure, facultyId);
+      if (!faculty) {
         return res.status(400).json({ 
           success: false, 
           message: 'Выберите корректный факультет' 
         });
       }
-      if (!course || !COURSES.includes(parseInt(course))) {
-        return res.status(400).json({ 
-          success: false, 
-          message: 'Выберите корректный курс (1-5)' 
+
+      const program = findProgram(faculty, programId);
+      if (!program) {
+        return res.status(400).json({
+          success: false,
+          message: 'Выберите корректное направление подготовки'
         });
       }
-      if (!group || !GROUPS.includes(group)) {
+
+      const courseNode = findCourse(program, course);
+      if (!courseNode) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Выберите корректный курс'
+        });
+      }
+
+      const group = findGroup(courseNode, groupId);
+      if (!group) {
         return res.status(400).json({ 
           success: false, 
           message: 'Выберите корректную группу' 
@@ -268,9 +286,13 @@ exports.register = async (req, res) => {
       }
 
       userData.student_id = extractStudentId(email);
-      userData.faculty = faculty;
+      userData.faculty = faculty.name;
+      userData.faculty_id = faculty.id;
+      userData.program = program.name;
+      userData.program_id = program.id;
       userData.course = parseInt(course);
-      userData.group = group;
+      userData.group = group.name;
+      userData.group_id = group.id;
 
     } else if (role === USER_ROLES.TEACHER) {
       // Преподаватель
@@ -356,12 +378,11 @@ exports.getMe = async (req, res) => {
  */
 exports.getConstants = async (req, res) => {
   try {
+    const structure = await getStructure();
     res.json({
       success: true,
       constants: {
-        faculties: FACULTIES,
-        courses: COURSES,
-        groups: GROUPS,
+        structure,
         departments: DEPARTMENTS,
         roles: Object.values(USER_ROLES)
       }

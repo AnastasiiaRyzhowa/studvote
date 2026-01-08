@@ -4,28 +4,6 @@
 const JWT_EXPIRATION = '30d';
 const CODE_EXPIRATION = 300; // 5 минут в секундах
 
-// Факультеты
-const FACULTIES = [
-  'Прикладная информатика',
-  'Финансы и кредит',
-  'Экономика',
-  'Менеджмент',
-  'Юриспруденция'
-];
-
-// Курсы
-const COURSES = [1, 2, 3, 4, 5];
-
-// Группы (общий список)
-const GROUPS = [
-  'ПИ-401',
-  'ПИ-402',
-  'ФК-301',
-  'ФК-302',
-  'ЭК-201',
-  'МН-401'
-];
-
 // Кафедры
 const DEPARTMENTS = [
   'Кафедра информационных технологий',
@@ -52,9 +30,6 @@ const EMAIL_PATTERNS = {
 module.exports = {
   JWT_EXPIRATION,
   CODE_EXPIRATION,
-  FACULTIES,
-  COURSES,
-  GROUPS,
   DEPARTMENTS,
   USER_ROLES,
   EMAIL_PATTERNS

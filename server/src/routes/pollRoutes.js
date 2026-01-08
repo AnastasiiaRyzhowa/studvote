@@ -26,6 +26,7 @@ router.get('/', pollController.getPolls);
  * @body    title, description, type, visibility, options[], start_date, end_date
  * @access  Private (authenticated users)
  */
+router.post('/quick-lesson-poll', authenticate, pollController.createQuickLessonPoll);
 router.post('/', authenticate, pollController.createPoll);
 
 /**
@@ -79,6 +80,13 @@ router.get('/votes/my', authenticate, pollController.getMyVotes);
  * @access  Private (authenticated users)
  */
 router.get('/:id/analyze', authenticate, pollController.analyzeResults);
+
+/**
+ * @route   GET /api/polls/:pollId/analytics
+ * @desc    Получить аналитику по опросу (срезы по факультетам, программам, курсам)
+ * @access  Private (authenticated users - только создатель или админ)
+ */
+router.get('/:pollId/analytics', authenticate, pollController.getPollAnalytics);
 
 /**
  * @route   GET /api/polls/:id

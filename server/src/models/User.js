@@ -29,6 +29,26 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: function() { return this.role === 'student'; }
   },
+  faculty_id: {
+    type: String,
+    required: false
+  },
+  faculty_name: {
+    type: String,
+    required: false
+  },
+  program: {
+    type: String,
+    required: function() { return this.role === 'student'; }
+  },
+  program_id: {
+    type: String,
+    required: false
+  },
+  program_name: {
+    type: String,
+    required: false
+  },
   course: {
     type: Number,
     min: 1,
@@ -38,6 +58,14 @@ const userSchema = new mongoose.Schema({
   group: {
     type: String,
     required: function() { return this.role === 'student'; }
+  },
+  group_id: {
+    type: Number,
+    required: false
+  },
+  group_name: {
+    type: String,
+    required: false
   },
   
   // Поля для преподавателей
@@ -96,8 +124,15 @@ userSchema.methods.toPublicJSON = function() {
   if (this.role === 'student') {
     obj.student_id = this.student_id;
     obj.faculty = this.faculty;
+    obj.faculty_id = this.faculty_id;
+    obj.faculty_name = this.faculty_name;
+    obj.program = this.program;
+    obj.program_id = this.program_id;
+    obj.program_name = this.program_name;
     obj.course = this.course;
     obj.group = this.group;
+    obj.group_id = this.group_id;
+    obj.group_name = this.group_name;
     obj.student_data = this.student_data;
   } else if (this.role === 'teacher') {
     obj.department = this.department;
