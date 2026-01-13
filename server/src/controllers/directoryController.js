@@ -6,6 +6,7 @@ const {
   findProgram,
   findCourse
 } = require('../services/academicStructureService');
+const { searchTeachers } = require('../services/ruzService');
 
 exports.getStructure = async (req, res) => {
   const structure = await getStructure();
@@ -58,5 +59,43 @@ exports.getGroups = async (req, res) => {
     return res.status(404).json({ success: false, message: 'Курс не найден' });
   }
   res.json({ success: true, groups: courseNode.groups });
+};
+
+/**
+ * GET /api/directory/teachers?q=Иванов
+ */
+exports.searchTeachers = async (req, res) => {
+  try {
+    const { q } = req.query;
+    if (!q || q.trim().length < 2) {
+      return res.status(400).json({ success: false, message: 'q обязателен (минимум 2 символа)' });
+    }
+    const raw = await searchTeachers(q);
+    const teachers = Array.isArray(raw) ? raw : (raw?.teachers || raw?.items || []);
+    // нормализация под автокомплит
+    const normalized = teachers
+      .map((t) => {
+        const id = t?.oid || t?.teacherOid || t?.id || t?.lecturerOid || t?.guid;
+        const label = t?.fio || t?.name || t?.title || t?.label || '';
+        const department = t?.chair || t?.department || t?.cathedra || t?.description || '';
+        return { id, label, department, raw: t };
+      })
+      .filter((t) => t.id && t.label);
+
+    const uniq = new Map();
+    normalized.forEach((t, idx) => {
+      const key = `${t.id}-${t.label}`;
+      if (!uniq.has(key)) uniq.set(key, { ...t, key });
+      else {
+        // в случае дубля добавим индекс для уникальности
+        uniq.set(`${key}-${idx}`, { ...t, id: `${t.id}-${idx}`, key: `${key}-${idx}` });
+      }
+    });
+
+    res.json({ success: true, teachers: Array.from(uniq.values()) });
+  } catch (error) {
+    console.error('Ошибка поиска преподавателей:', error.message);
+    res.status(500).json({ success: false, message: 'Ошибка при поиске преподавателей' });
+  }
 };
 

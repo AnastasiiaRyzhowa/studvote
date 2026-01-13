@@ -3,6 +3,7 @@ const Vote = require('../models/Vote');
 const User = require('../models/User');
 const gigachatService = require('../services/gigachatService');
 const scheduleService = require('../services/scheduleService');
+const { buildVoteAnalytics } = require('../services/voteAnalyticsService');
 
 const DEFAULT_DEADLINE_HOURS = 24;
 
@@ -49,7 +50,7 @@ const buildTemplateQuestions = (pollType, context) => {
           {
             id: 4,
             text: 'Что можно улучшить?',
-            type: 'text',
+            type: 'text_long',
             maxLength: 300,
             required: false
           }
@@ -90,10 +91,31 @@ const buildTemplateQuestions = (pollType, context) => {
           },
           {
             id: 4,
-            text: 'Хотели бы продолжить обучение у этого преподавателя?',
-            type: 'binary',
-            options: ['Да', 'Нет'],
+            text: 'Связь теории с практикой',
+            type: 'rating',
+            scale: 5,
+            labels: { min: 'Нет связи', max: 'Отличная связь' },
             required: true
+          },
+          {
+            id: 5,
+            text: 'Хотели бы продолжить обучение у этого преподавателя?',
+            type: 'single_choice',
+            options: [
+              'Да, определённо',
+              'Скорее да',
+              'Не знаю',
+              'Скорее нет',
+              'Нет'
+            ],
+            required: true
+          },
+          {
+            id: 6,
+            text: 'Комментарий (необязательно)',
+            type: 'text_long',
+            maxLength: 300,
+            required: false
           }
         ]
       };
@@ -126,25 +148,134 @@ const buildTemplateQuestions = (pollType, context) => {
             id: 3,
             text: 'Были ли технические проблемы?',
             type: 'binary',
-            options: ['Нет', 'Да'],
+            options: ['Да', 'Нет'],
             required: true,
             followUp: {
-              showIf: 'Да',
+              condition: {
+                type: 'equals',
+                value: 'Да'
+              },
               question: {
                 id: 31,
-                text: 'Какие именно?',
+                text: 'Какие именно проблемы были?',
                 type: 'multiple_choice',
                 options: [
-                  'Не работал проектор',
-                  'Плохой звук',
-                  'Проблемы с Wi-Fi',
-                  'Холодно/Жарко',
+                  'Проблемы с проектором',
+                  'Нет звука/микрофона',
+                  'Нет WiFi',
+                  'Проблемы с температурой',
                   'Плохое освещение',
                   'Другое'
                 ],
+                allowOther: true,
+                required: true
+              }
+            }
+          },
+          {
+            id: 4,
+            text: 'Дополнительные комментарии',
+            type: 'text_short',
+            maxLength: 200,
+            required: false
+          }
+        ]
+      };
+    case 'teacher_lesson_review':
+      return {
+        title: `Оценка занятия | ${context.dateLabel || ''} | ${context.group || context.groupId || 'Группа'} | ${context.subject || ''}`.trim(),
+        description: 'Оценка прошедшей пары преподавателем',
+        is_anonymous: false,
+        reward_points: 0,
+        show_results: 'after_vote',
+        minResponsesForResults: 0,
+        questions: [
+          {
+            id: 1,
+            text: 'Посещаемость: сколько студентов присутствовало (из 25)?',
+            type: 'text_short',
+            maxLength: 20,
+            required: true
+          },
+          {
+            id: 2,
+            text: 'Активность группы на занятии',
+            type: 'rating',
+            scale: 5,
+            labels: { min: 'Низкая', max: 'Высокая' },
+            required: true
+          },
+          {
+            id: 3,
+            text: 'Качество выполнения заданий',
+            type: 'rating',
+            scale: 5,
+            labels: { min: 'Плохое', max: 'Отличное' },
+            required: true
+          },
+          {
+            id: 4,
+            text: 'Изменить рейтинг надёжности группы?',
+            type: 'single_choice',
+            options: [
+              'Повысить (+5 баллов) - группа работала отлично',
+              'Оставить без изменений',
+              'Понизить (-5 баллов) - низкая посещаемость/активность',
+              'Значительно понизить (-10 баллов) - серьёзные проблемы'
+            ],
+            required: true,
+            followUp: {
+              condition: {
+                type: 'not_equals',
+                value: 'Оставить без изменений'
+              },
+              question: {
+                id: 5,
+                text: 'Обоснование изменения рейтинга (обязательно при понижении)',
+                type: 'text_long',
+                maxLength: 200,
                 required: false
               }
             }
+          },
+          {
+            id: 6,
+            text: 'Ссылка на фото-доказательство (опционально)',
+            type: 'text_short',
+            maxLength: 200,
+            required: false
+          },
+          {
+            id: 7,
+            text: 'Комментарий о занятии (необязательно)',
+            type: 'text_long',
+            maxLength: 300,
+            required: false
+          }
+        ]
+      };
+    case 'teacher_future_preferences':
+      return {
+        title: `Опрос к занятию | ${context.dateLabel || ''} | ${context.group || context.groupId || 'Группа'} | ${context.subject || ''}`.trim(),
+        description: 'Собираем пожелания студентов к следующей паре',
+        is_anonymous: true,
+        reward_points: 3,
+        show_results: 'after_vote',
+        minResponsesForResults: 0,
+        questions: [
+          {
+            id: 1,
+            text: 'Какие темы вы хотите увидеть на следующей лекции?',
+            type: 'text_long',
+            maxLength: 300,
+            required: false
+          },
+          {
+            id: 2,
+            text: 'Предпочтительный формат занятия (лекция, практика, воркшоп, Q&A и др.)',
+            type: 'text_long',
+            maxLength: 300,
+            required: false
           }
         ]
       };
@@ -183,6 +314,7 @@ const extractLessonContext = (lesson, fallbackGroup) => {
     lessonType: lesson.kindOfWork || lesson.lessonType || null,
     time,
     groupId: lesson.group || lesson.groupOid || fallbackGroup || null,
+    group: lesson.group || lesson.group_name || lesson.stream || null,
     dateLabel: parsedDate ? parsedDate.toLocaleDateString('ru-RU') : (dateString || '')
   };
 };
@@ -240,42 +372,120 @@ exports.getPolls = async (req, res) => {
       filter = 'all',
       page = 1,
       limit = 50,
-      group_id
+      group_id,
+      showAll
     } = req.query;
 
     const userId = req.user?.userId;
-    const now = new Date();
+    const currentUser = userId ? await User.findById(userId).lean() : null;
+    const now = new Date(); // Текущая дата для фильтрации
 
     // Построение базового фильтра
     let query = {};
+    let roleScope = [];
     
     // Применяем фильтр
     switch(filter) {
       case 'active':
-        // Активные опросы: status=active, дедлайн не прошел, пользователь НЕ голосовал
+        // Активные опросы: пользователь НЕ голосовал И дедлайн не прошел
         query = {
           status: 'active',
           end_date: { $gt: now },
           ...(userId ? { voted_users: { $ne: userId } } : {})
         };
+        // Для активных опросов ограничиваем видимость в зависимости от роли
+        if (req.user?.role === 'student' && !showAll) {
+          const g = currentUser?.group;
+          const gid = currentUser?.group_id;
+          const visibilityOr = [
+            { pollType: 'custom' }, // Кастомные опросы видны всем
+          ];
+          
+          // Опросы для группы студента (любого типа)
+          const groupConditions = [
+            g ? { target_groups: g } : null,
+            gid ? { target_groups: gid } : null,
+            gid ? { target_groups: String(gid) } : null,
+            g ? { 'lessonContext.group': g } : null,
+            (g || gid) ? { 'lessonContext.groupId': (g || gid).toString() } : null
+          ].filter(Boolean);
+          
+          if (groupConditions.length) {
+            visibilityOr.push({ $or: groupConditions });
+          }
+          
+          roleScope.push({ $or: visibilityOr });
+        }
+        
+        // Для преподавателей показываем только опросы о них
+        if (req.user?.role === 'teacher' && currentUser?.full_name) {
+          const teacherName = currentUser.full_name;
+          roleScope.push({
+            $or: [
+              { teacher_name: teacherName },
+              { 'lessonContext.teacher': teacherName },
+              { 
+                pollType: 'teacher_feedback',
+                $or: [
+                  { teacher_name: teacherName },
+                  { 'lessonContext.teacher': teacherName }
+                ]
+              }
+            ]
+          });
+        }
         break;
         
       case 'completed':
-        // Завершенные: дедлайн прошел ИЛИ status=completed
-        query = {
-          $or: [
-            { end_date: { $lt: now } },
-            { status: 'completed' }
-          ]
-        };
-        break;
-        
-      case 'my-votes':
-        // Мои голоса: пользователь проголосовал
+        // Завершенные: пользователь УЖЕ проголосовал
         if (userId) {
           query = {
             voted_users: userId
           };
+          
+          // Для преподавателей показываем только опросы о них
+          if (req.user?.role === 'teacher' && currentUser?.full_name) {
+            const teacherName = currentUser.full_name;
+            roleScope.push({
+              $or: [
+                { teacher_name: teacherName },
+                { 'lessonContext.teacher': teacherName }
+              ]
+            });
+          }
+        } else {
+          // Если не авторизован, возвращаем пустой результат
+          return res.json({
+            success: true,
+            polls: [],
+            filter,
+            pagination: {
+              page: parseInt(page),
+              limit: parseInt(limit),
+              total: 0,
+              pages: 0
+            }
+          });
+        }
+        break;
+        
+      case 'my-votes':
+        // Мои голоса: пользователь проголосовал (то же что и completed, для совместимости)
+        if (userId) {
+          query = {
+            voted_users: userId
+          };
+          
+          // Для преподавателей показываем только опросы о них
+          if (req.user?.role === 'teacher' && currentUser?.full_name) {
+            const teacherName = currentUser.full_name;
+            roleScope.push({
+              $or: [
+                { teacher_name: teacherName },
+                { 'lessonContext.teacher': teacherName }
+              ]
+            });
+          }
         } else {
           // Если не авторизован, возвращаем пустой результат
           return res.json({
@@ -295,18 +505,23 @@ exports.getPolls = async (req, res) => {
       default: // 'all'
         // Все опросы без фильтров
         query = {};
+        
+        // Для преподавателей показываем только опросы о них
+        if (req.user?.role === 'teacher' && currentUser?.full_name) {
+          const teacherName = currentUser.full_name;
+          roleScope.push({
+            $or: [
+              { teacher_name: teacherName },
+              { 'lessonContext.teacher': teacherName }
+            ]
+          });
+        }
         break;
     }
 
-    // Фильтр по целевой группе (для предметных опросов)
-    if (group_id) {
-      const gidNum = Number(group_id);
-      if (!Number.isNaN(gidNum)) {
-        query = {
-          ...query,
-          target_groups: gidNum
-        };
-      }
+    // roleScope учитывает роль пользователя (студент/преподаватель)
+    if (roleScope.length) {
+      query = Object.keys(query).length ? { $and: [query, ...roleScope] } : { $and: roleScope };
     }
 
     // Пагинация
@@ -324,13 +539,20 @@ exports.getPolls = async (req, res) => {
     // Подсчет общего количества
     const total = await Poll.countDocuments(query);
 
-    // Для каждого опроса добавляем информацию о голосовании текущего пользователя
-    const pollsWithVoteInfo = polls.map(poll => ({
-      ...poll,
-      has_voted: userId ? poll.voted_users.some(
-        id => id.toString() === userId.toString()
-      ) : false
-    }));
+  // Для каждого опроса добавляем информацию о голосовании текущего пользователя
+  const pollsWithVoteInfo = polls.map(poll => ({
+    ...poll,
+    has_voted: userId ? poll.voted_users.some(
+      id => id.toString() === userId.toString()
+    ) : false
+  }));
+
+    console.log('📋 POLLS DEBUG:');
+    console.log('   Filter:', filter);
+    console.log('   User ID:', userId);
+    console.log('   Query:', JSON.stringify(query));
+    console.log('   Found polls:', polls.length);
+    console.log('   Total count:', total);
 
     res.json({
       success: true,
@@ -360,15 +582,50 @@ exports.getPolls = async (req, res) => {
 exports.getPollsCounts = async (req, res) => {
   try {
     const userId = req.user?.userId;
+    const currentUser = userId ? await User.findById(userId).lean() : null;
     const now = new Date();
 
-    // Базовый query (пустой, т.к. нет visibility restrictions в текущей реализации)
-    const baseQuery = {};
+    // Базовый query с учетом роли пользователя
+    let baseQuery = {};
+    const roleScope = [];
+    
+    if (req.user?.role === 'student') {
+      // Для студентов показываем только custom опросы или опросы их группы
+      roleScope.push({ pollType: 'custom' });
+      const g = currentUser?.group;
+      const gid = currentUser?.group_id;
+      const groupOr = [
+        g ? { target_groups: g } : null,
+        gid ? { target_groups: gid } : null,
+        gid ? { target_groups: String(gid) } : null,
+        g ? { 'lessonContext.group': g } : null,
+        (g || gid) ? { 'lessonContext.groupId': (g || gid).toString() } : null
+      ].filter(Boolean);
+      if (groupOr.length) {
+        roleScope.push({ $or: groupOr });
+      }
+    }
+    
+    // Для преподавателей показываем только опросы о них
+    if (req.user?.role === 'teacher' && currentUser?.full_name) {
+      const teacherName = currentUser.full_name;
+      roleScope.push({
+        $or: [
+          { teacher_name: teacherName },
+          { 'lessonContext.teacher': teacherName }
+        ]
+      });
+    }
+
+    if (roleScope.length) {
+      baseQuery = { $or: roleScope };
+    }
 
     // Подсчет для каждого фильтра
     const counts = {
-      all: await Poll.countDocuments(baseQuery),
+      all: 0, // Убрали вкладку "Все", поэтому 0
       
+      // АКТИВНЫЕ: опросы где студент НЕ голосовал и дедлайн не прошел
       active: await Poll.countDocuments({
         ...baseQuery,
         status: 'active',
@@ -376,19 +633,25 @@ exports.getPollsCounts = async (req, res) => {
         ...(userId ? { voted_users: { $ne: userId } } : {})
       }),
       
-      completed: await Poll.countDocuments({
+      // ЗАВЕРШЕННЫЕ: опросы где студент УЖЕ проголосовал
+      completed: userId ? await Poll.countDocuments({
         ...baseQuery,
-        $or: [
-          { end_date: { $lt: now } },
-          { status: 'completed' }
-        ]
-      }),
+        voted_users: userId
+      }) : 0,
       
+      // МОИ ГОЛОСА: то же что и завершенные
       myVotes: userId ? await Poll.countDocuments({
         ...baseQuery,
         voted_users: userId
       }) : 0
     };
+
+    console.log('📊 COUNTS DEBUG:');
+    console.log('   User ID:', userId);
+    console.log('   User role:', req.user?.role);
+    console.log('   User group:', currentUser?.group, currentUser?.group_id);
+    console.log('   Base query:', JSON.stringify(baseQuery));
+    console.log('   Counts:', counts);
 
     res.json({
       success: true,
@@ -481,12 +744,23 @@ exports.createQuickLessonPoll = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Пользователь не найден' });
     }
 
-    // Загружаем расписание группы и ищем пару
+    // Загружаем расписание и ищем пару
     const range = scheduleService.getDefaultRange();
-    const groupId = user.group_id || user.group;
-    const schedule = groupId
-      ? await scheduleService.getGroupSchedule(groupId, { ...range, lng: 1 })
-      : [];
+    let schedule = [];
+    let groupId = user.group_id || user.group;
+
+    if (user.role === 'teacher' && user.ruz_teacher_id) {
+      const teacherResp = await scheduleService.getPersonSchedule(user.ruz_teacher_id, { ...range, lng: 1 });
+      schedule = Array.isArray(teacherResp) ? teacherResp : (teacherResp?.data || []);
+    } else {
+      const scheduleResp = groupId
+        ? await scheduleService.getGroupSchedule(groupId, { ...range, lng: 1 })
+        : { data: [] };
+      schedule = Array.isArray(scheduleResp) ? scheduleResp : (scheduleResp?.data || []);
+    }
+
+    let lessonContext = null;
+    let targetLesson = null;
 
     const lesson = schedule.find((item) => {
       const possibleIds = [
@@ -500,19 +774,34 @@ exports.createQuickLessonPoll = async (req, res) => {
     });
 
     if (!lesson) {
-      return res.status(404).json({
-        success: false,
-        message: 'Пара не найдена в расписании'
-      });
+      // Для отчёта преподавателя может не быть чёткого совпадения ID — пробуем сопоставить по дате/времени
+      if (pollType === 'teacher_lesson_review' || pollType === 'teacher_future_preferences') {
+        const fallbackLesson = schedule.find((item) => String(item.lessonOid || item.id || item.lessonId || '') === String(lessonId)) || schedule[0];
+        if (!fallbackLesson) {
+          return res.status(404).json({
+            success: false,
+            message: 'Пара не найдена в расписании'
+          });
+        }
+        targetLesson = fallbackLesson;
+        lessonContext = extractLessonContext(fallbackLesson, groupId);
+      } else {
+        return res.status(404).json({
+          success: false,
+          message: 'Пара не найдена в расписании'
+        });
+      }
+    } else {
+      targetLesson = lesson;
+      lessonContext = extractLessonContext(lesson, groupId);
     }
 
-    const lessonContext = extractLessonContext(lesson, groupId);
     const now = new Date();
 
     // Определяем статус прошедшая/будущая пара
-    const endDateString = lesson.date && (lesson.endLesson || lesson.endTime)
-      ? `${lesson.date} ${lesson.endLesson || lesson.endTime}`
-      : lesson.date;
+    const endDateString = targetLesson?.date && (targetLesson.endLesson || targetLesson.endTime)
+      ? `${targetLesson.date} ${targetLesson.endLesson || targetLesson.endTime}`
+      : targetLesson?.date;
     const endDate = endDateString ? new Date(endDateString) : now;
     const isCompletedLesson = endDate < now;
 
@@ -565,6 +854,40 @@ exports.createQuickLessonPoll = async (req, res) => {
       pollData.end_date = new Date(now.getTime() + DEFAULT_DEADLINE_HOURS * 3600 * 1000);
     }
 
+    // Частный случай: отчёт преподавателя — не показываем студентам, храним приватно
+    if (pollType === 'teacher_lesson_review') {
+      pollData.visibility = 'private';
+      pollData.target_groups = [];
+      pollData.target_courses = [];
+      pollData.target_faculties = [];
+      pollData.target_programs = [];
+      pollData.is_anonymous = false;
+      pollData.reward_points = 0;
+    }
+
+    // ===== ПРОВЕРКА: Существует ли уже опрос для этой пары? =====
+    // Ищем опрос с теми же параметрами (subject, teacher, date, pollType, group)
+    const existingPoll = await Poll.findOne({
+      pollType: pollType,
+      'lessonContext.subject': lessonContext.subject,
+      'lessonContext.teacher': lessonContext.teacher,
+      'lessonContext.date': lessonContext.date,
+      'lessonContext.time': lessonContext.time,
+      status: { $ne: 'deleted' }
+    }).sort({ created_at: -1 }).lean();
+
+    // Если опрос уже существует - вернуть его, НЕ создавая новый
+    if (existingPoll) {
+      console.log('✅ Опрос уже существует для этой пары:', existingPoll._id);
+      return res.status(200).json({
+        success: true,
+        message: 'Опрос уже существует для этой пары',
+        poll: existingPoll,
+        isExisting: true
+      });
+    }
+
+    // Если опроса нет - создаем новый
     const poll = new Poll(pollData);
     await poll.save();
 
@@ -705,7 +1028,7 @@ exports.createPoll = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ ОШИБКА СОЗДАНИЯ ОПРОСА:');
+    console.error(' ОШИБКА СОЗДАНИЯ ОПРОСА:');
     console.error('Тип ошибки:', error.name);
     console.error('Сообщение:', error.message);
     console.error('Детали:', error);
@@ -778,9 +1101,16 @@ exports.getMyPolls = async (req, res) => {
 exports.vote = async (req, res) => {
   try {
     const { poll_id, option_ids, answers, type } = req.body;
+    
+    console.log('\n🗳️  VOTE REQUEST:');
+    console.log('   User ID:', req.user?.userId);
+    console.log('   Poll ID:', poll_id);
+    console.log('   Type:', type);
+    console.log('   Has answers:', !!answers);
 
     // Валидация базовых данных
     if (!poll_id) {
+      console.log('   ❌ Нет poll_id');
       return res.status(400).json({
         success: false,
         message: 'Укажите опрос'
@@ -876,7 +1206,11 @@ exports.vote = async (req, res) => {
               value = [];
               break;
             }
-            const invalid = value.filter(v => !question.options || !question.options.includes(v));
+            const invalid = value.filter(v => {
+              if (question.options && question.options.includes(v)) return false;
+              if (question.allowOther && typeof v === 'string' && v.toLowerCase().startsWith('другое')) return false;
+              return true;
+            });
             if (invalid.length) {
               throw new Error(`Недопустимый вариант для "${question.text}"`);
             }
@@ -959,18 +1293,31 @@ exports.vote = async (req, res) => {
         }
       }
 
+      // Специфичная валидация для отчёта преподавателя: требуем обоснование при понижении рейтинга
+      if (poll.pollType === 'teacher_lesson_review') {
+        const changeValue = answersObject[4];
+        const justification = answersObject[5];
+        const lowered = typeof changeValue === 'string' && changeValue.toLowerCase().includes('пониз');
+        if (lowered && (!justification || String(justification).trim().length === 0)) {
+          return res.status(400).json({
+            success: false,
+            message: 'Пожалуйста, укажите обоснование при понижении рейтинга'
+          });
+        }
+      }
+
       // Получаем полные данные пользователя для метаданных
       const fullUser = await User.findById(req.user.userId);
       
       // Метаданные пользователя для срезов
       const userMetadata = {
-        faculty: fullUser.faculty,
-        faculty_name: fullUser.faculty_name || fullUser.faculty,
-        program: fullUser.program,
-        program_name: fullUser.program_name || fullUser.program,
-        course: fullUser.course,
-        group_id: fullUser.group_id ? fullUser.group_id.toString() : fullUser.group,
-        group_name: fullUser.group_name || fullUser.group
+        faculty: fullUser.faculty || 'n/a',
+        faculty_name: fullUser.faculty_name || fullUser.faculty || 'n/a',
+        program: fullUser.program || 'n/a',
+        program_name: fullUser.program_name || fullUser.program || 'n/a',
+        course: Number.isFinite(fullUser.course) ? fullUser.course : 0,
+        group_id: fullUser.group_id ? fullUser.group_id.toString() : (fullUser.group || 'n/a'),
+        group_name: fullUser.group_name || fullUser.group || 'n/a'
       };
 
       // Сохраняем ответы
@@ -1006,6 +1353,11 @@ exports.vote = async (req, res) => {
 
       await poll.save();
       
+      console.log('   ✅ Голос сохранён!');
+      console.log('   📊 Всего ответов:', poll.responses.length);
+      console.log('   👥 В voted_users:', poll.voted_users.length);
+      console.log('');
+
       // Начисляем баллы пользователю
       const reward = poll.reward_points || 0;
       if (reward > 0 && fullUser?.role === 'student') {
@@ -1021,10 +1373,17 @@ exports.vote = async (req, res) => {
         });
       });
 
+      // Собираем быстрый аналитический ответ для студента
+      let analytics = null;
+      if (req.user?.role === 'student') {
+        analytics = buildVoteAnalytics(poll, req.user.userId, true);
+      }
+
       return res.json({
         success: true,
         message: 'Ответы сохранены',
-        points_earned: reward
+        points_earned: reward,
+        analytics
       });
     }
 
@@ -1071,13 +1430,13 @@ exports.vote = async (req, res) => {
     
     // Метаданные пользователя для срезов (для новой системы)
     const userMetadata = {
-      faculty: fullUser.faculty,
-      faculty_name: fullUser.faculty_name || fullUser.faculty,
-      program: fullUser.program,
-      program_name: fullUser.program_name || fullUser.program,
-      course: fullUser.course,
-      group_id: fullUser.group_id ? fullUser.group_id.toString() : fullUser.group,
-      group_name: fullUser.group_name || fullUser.group
+      faculty: fullUser.faculty || 'n/a',
+      faculty_name: fullUser.faculty_name || fullUser.faculty || 'n/a',
+      program: fullUser.program || 'n/a',
+      program_name: fullUser.program_name || fullUser.program || 'n/a',
+      course: Number.isFinite(fullUser.course) ? fullUser.course : 0,
+      group_id: fullUser.group_id ? fullUser.group_id.toString() : (fullUser.group || 'n/a'),
+      group_name: fullUser.group_name || fullUser.group || 'n/a'
     };
     
     // Обновление опроса с метаданными (новая система)
@@ -1087,9 +1446,15 @@ exports.vote = async (req, res) => {
     // Начисляем баллы пользователю
     const reward = poll.reward_points || 10;
     if (reward > 0 && fullUser?.role === 'student') {
-      await User.findByIdAndUpdate(req.user.userId, {
+    await User.findByIdAndUpdate(req.user.userId, {
         $inc: { 'student_data.points': reward }
-      });
+    });
+    }
+
+    // Собираем быстрый аналитический ответ для студента
+    let analytics = null;
+    if (req.user?.role === 'student') {
+      analytics = buildVoteAnalytics(poll, req.user.userId, true);
     }
 
     res.json({
@@ -1099,11 +1464,12 @@ exports.vote = async (req, res) => {
       poll: {
         total_votes: poll.total_votes,
         options: poll.options
-      }
+      },
+      analytics
     });
 
   } catch (error) {
-    console.error('❌ ОШИБКА ГОЛОСОВАНИЯ:');
+    console.error(' ОШИБКА ГОЛОСОВАНИЯ:');
     console.error('Тип ошибки:', error.name);
     console.error('Сообщение:', error.message);
     console.error('Детали:', error);
@@ -1358,6 +1724,149 @@ exports.getPollAnalytics = async (req, res) => {
   } catch (error) {
     console.error('Error getting poll analytics:', error);
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Получить персональную аналитику после голосования
+ * GET /api/polls/:pollId/my-feedback-summary
+ */
+exports.getMyFeedbackSummary = async (req, res) => {
+  try {
+    const { pollId } = req.params;
+    const userId = req.user.userId;
+    
+    // Получаем опрос
+    const poll = await Poll.findById(pollId);
+    if (!poll) {
+      return res.status(404).json({ success: false, message: 'Опрос не найден' });
+    }
+    
+    // Находим ответ текущего пользователя
+    const myResponse = poll.responses.find(r => r.user_id && r.user_id.toString() === userId.toString());
+    if (!myResponse) {
+      return res.status(404).json({ success: false, message: 'Вы еще не проголосовали' });
+    }
+    
+    // Получаем группу пользователя
+    const currentUser = await User.findById(userId);
+    const userGroup = currentUser.group;
+    
+    // Фильтруем ответы только студентов из той же группы
+    // Сравниваем по user_group_name (название группы), а не user_group (может быть ID)
+    const groupResponses = poll.responses.filter(r => {
+      const responseGroup = r.user_group_name || r.user_group;
+      return responseGroup === userGroup && r.user_id && r.user_id.toString() !== userId.toString();
+    });
+    
+    // Анализируем ответы
+    const myAnswers = myResponse.answers || {};
+    const comparisons = [];
+    const groupComments = [];
+    
+    // Обрабатываем вопросы
+    if (poll.questions && poll.questions.length > 0) {
+      poll.questions.forEach(question => {
+        const myAnswer = myAnswers[question.id];
+        
+        if (question.type === 'rating' && myAnswer !== undefined) {
+          // Считаем среднее по группе для rating вопросов
+          const groupRatings = groupResponses
+            .map(r => r.answers && r.answers[question.id])
+            .filter(val => val !== undefined && val !== null);
+          
+          if (groupRatings.length > 0) {
+            const groupAvg = groupRatings.reduce((sum, val) => sum + val, 0) / groupRatings.length;
+            
+            comparisons.push({
+              questionText: question.text,
+              myValue: myAnswer,
+              groupAverage: parseFloat(groupAvg.toFixed(1)),
+              questionType: 'rating',
+              scale: question.scale || 5
+            });
+          }
+        } else if (question.type === 'text' && myAnswer && myAnswer.trim()) {
+          // Собираем текстовые ответы группы
+          groupResponses.forEach(r => {
+            const answer = r.answers && r.answers[question.id];
+            if (answer && answer.trim()) {
+              groupComments.push({
+                questionText: question.text,
+                text: answer
+              });
+            }
+          });
+        }
+      });
+    }
+    
+    // Собираем топ-3 комментария (по длине или частоте упоминания ключевых слов)
+    const topComments = groupComments
+      .slice(0, 10)  // Берём первые 10 для анализа
+      .map(c => c.text);
+    
+    // Используем AI для суммаризации комментариев
+    let aiSummary = null;
+    let aiInsight = null;
+    
+    if (topComments.length > 0 && comparisons.length > 0) {
+      try {
+        // Формируем промпт для AI
+        const commentsText = topComments.join('\n- ');
+        const myScores = comparisons.map(c => `${c.questionText}: ${c.myValue}/${c.scale}`).join(', ');
+        const groupScores = comparisons.map(c => `${c.questionText}: ${c.groupAverage}/${c.scale}`).join(', ');
+        
+        const aiPrompt = `Ты - аналитик образовательной платформы. Студент только что оценил занятие и хочет понять, как его мнение соотносится с группой.
+
+ОЦЕНКИ СТУДЕНТА: ${myScores}
+СРЕДНИЕ ОЦЕНКИ ГРУППЫ: ${groupScores}
+
+КОММЕНТАРИИ ДРУГИХ СТУДЕНТОВ ГРУППЫ:
+- ${commentsText}
+
+Задачи:
+1. Кратко (2-3 предложения) суммируй общее настроение группы по этому занятию
+2. Дай студенту персональный инсайт: как его оценки отличаются от группы и что это может значить (1-2 предложения)
+
+Пиши простым языком, дружелюбно, как коллега студенту. Без формальностей.`;
+        
+        const aiResponse = await gigachatService.chat(aiPrompt);
+        
+        if (aiResponse && aiResponse.message) {
+          // Пытаемся разделить на summary и insight
+          const parts = aiResponse.message.split(/\n\n+/);
+          if (parts.length >= 2) {
+            aiSummary = parts[0].trim();
+            aiInsight = parts[1].trim();
+          } else {
+            aiSummary = aiResponse.message;
+          }
+        }
+      } catch (aiError) {
+        console.error('AI суммаризация не удалась:', aiError);
+        // Продолжаем без AI
+      }
+    }
+    
+    // Формируем ответ - ПРОСТО, без AI и комментариев
+    res.json({
+      success: true,
+      data: {
+        pollTitle: poll.title,
+        pollType: poll.pollType || poll.type,
+        yourGroup: userGroup,
+        groupSize: groupResponses.length + 1,  // +1 сам студент
+        comparisons  // Только оценки!
+      }
+    });
+    
+  } catch (error) {
+    console.error('Ошибка получения персональной аналитики:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Ошибка при получении аналитики' 
+    });
   }
 };
 

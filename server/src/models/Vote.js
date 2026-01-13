@@ -47,6 +47,10 @@ voteSchema.index({ poll_id: 1, voted_at: -1 });
 // Индекс для получения истории голосований пользователя
 voteSchema.index({ user_id: 1, voted_at: -1 });
 
+// Индексы для аналитики
+voteSchema.index({ voted_at: 1, user_id: 1 });
+voteSchema.index({ 'userData.group': 1, voted_at: 1 });
+
 /**
  * Статический метод: Проверяет, голосовал ли пользователь в опросе
  * @param {ObjectId} userId - ID пользователя

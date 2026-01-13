@@ -73,6 +73,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: function() { return this.role === 'teacher'; }
   },
+  ruz_teacher_id: {
+    type: String,
+    required: function() { return this.role === 'teacher'; }
+  },
+  ruz_teacher_name: {
+    type: String,
+    required: function() { return this.role === 'teacher'; }
+  },
   subjects: {
     type: [String],
     default: []
@@ -109,6 +117,7 @@ userSchema.index({ email: 1 });
 userSchema.index({ role: 1 });
 userSchema.index({ student_id: 1 }, { sparse: true });
 userSchema.index({ faculty: 1 }, { sparse: true });
+userSchema.index({ ruz_teacher_id: 1 }, { sparse: true });
 userSchema.index({ department: 1 }, { sparse: true });
 
 // Метод для получения публичной информации о пользователе
@@ -137,6 +146,8 @@ userSchema.methods.toPublicJSON = function() {
   } else if (this.role === 'teacher') {
     obj.department = this.department;
     obj.subjects = this.subjects;
+    obj.ruz_teacher_id = this.ruz_teacher_id;
+    obj.ruz_teacher_name = this.ruz_teacher_name;
   }
   
   return obj;

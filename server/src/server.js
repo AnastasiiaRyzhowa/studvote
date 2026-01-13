@@ -23,12 +23,16 @@ const pollRoutes = require('./routes/pollRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const directoryRoutes = require('./routes/directoryRoutes');
 const scheduleRoutes = require('./routes/scheduleRoutes');
+const analyticsRoutes = require('./routes/analyticsRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/polls', pollRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/directory', directoryRoutes);
 app.use('/api/schedule', scheduleRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/users', userRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

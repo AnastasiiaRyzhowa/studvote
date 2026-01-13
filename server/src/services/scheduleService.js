@@ -31,7 +31,7 @@ async function getGroupSchedule(groupId, { start, finish, lng = 1 }) {
   const cached = await redis.get(cacheKey);
   if (cached) {
     try {
-      return JSON.parse(cached);
+      return { data: JSON.parse(cached), stale: false };
     } catch (e) {
       // ignore broken cache
     }
@@ -41,10 +41,79 @@ async function getGroupSchedule(groupId, { start, finish, lng = 1 }) {
     const data = await fetchJson(`/schedule/group/${groupId}`, { start: normStart, finish: normFinish, lng });
     // Кешируем на 30 минут
     await redis.setex(cacheKey, 60 * 30, JSON.stringify(data));
-    return data;
+    return { data, stale: false };
   } catch (error) {
     console.error('Ошибка загрузки расписания из RUZ:', error.message);
-    return [];
+    // попытка отдать старые данные из кэша
+    if (cached) {
+      try {
+        return { data: JSON.parse(cached), stale: true };
+      } catch (e) {
+        // ignore
+      }
+    }
+    return { data: [], stale: true };
+  }
+}
+
+/**
+ * Загружает расписание преподавателя из RUZ с кешированием.
+ * @param {number|string} teacherId
+ * @param {object} options { start, finish, lng }
+ * @returns {Promise<Array>}
+ */
+async function getTeacherSchedule(teacherId, { start, finish, lng = 1 }) {
+  const normStart = normalizeDateString(start);
+  const normFinish = normalizeDateString(finish);
+  const cacheKey = `ruz:schedule:teacher:${teacherId}:${start}:${finish}:${lng}`;
+  const cached = await redis.get(cacheKey);
+  if (cached) {
+    try {
+      return { data: JSON.parse(cached), stale: false };
+    } catch (e) {}
+  }
+
+  try {
+    const data = await fetchJson(`/schedule/teacher/${teacherId}`, { start: normStart, finish: normFinish, lng });
+    await redis.setex(cacheKey, 60 * 30, JSON.stringify(data));
+    return { data, stale: false };
+  } catch (error) {
+    console.error('Ошибка загрузки расписания преподавателя из RUZ:', error.message);
+    if (cached) {
+      try {
+        return { data: JSON.parse(cached), stale: true };
+      } catch (e) {}
+    }
+    return { data: [], stale: true };
+  }
+}
+
+/**
+ * Загружает расписание по personId (RUZ search type=person) с кешированием.
+ */
+async function getPersonSchedule(personId, { start, finish, lng = 1 }) {
+  const normStart = normalizeDateString(start);
+  const normFinish = normalizeDateString(finish);
+  const cacheKey = `ruz:schedule:person:${personId}:${start}:${finish}:${lng}`;
+  const cached = await redis.get(cacheKey);
+  if (cached) {
+    try {
+      return { data: JSON.parse(cached), stale: false };
+    } catch (e) {}
+  }
+
+  try {
+    const data = await fetchJson(`/schedule/person/${personId}`, { start: normStart, finish: normFinish, lng });
+    await redis.setex(cacheKey, 60 * 30, JSON.stringify(data));
+    return { data, stale: false };
+  } catch (error) {
+    console.error('Ошибка загрузки расписания person из RUZ:', error.message);
+    if (cached) {
+      try {
+        return { data: JSON.parse(cached), stale: true };
+      } catch (e) {}
+    }
+    return { data: [], stale: true, error: error.message };
   }
 }
 
@@ -55,7 +124,7 @@ async function getGroupSchedule(groupId, { start, finish, lng = 1 }) {
  * @returns {Promise<Array<{subjectId,name,teachers:Array,lessonsCount:number}>>}
  */
 async function getSubjectsByGroup(groupId, { start, finish, lng = 1 }) {
-  const schedule = await getGroupSchedule(groupId, { start, finish, lng });
+  const { data: schedule } = await getGroupSchedule(groupId, { start, finish, lng });
   const subjectsMap = new Map();
 
   schedule.forEach((lesson) => {
@@ -120,5 +189,7 @@ module.exports = {
   getGroupSchedule,
   getSubjectsByGroup,
   getDefaultRange,
-  formatDate
+  formatDate,
+  getTeacherSchedule,
+  getPersonSchedule
 };

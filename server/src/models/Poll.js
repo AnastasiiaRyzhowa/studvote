@@ -18,7 +18,14 @@ const PollSchema = new mongoose.Schema({
   },
   pollType: {
     type: String,
-    enum: ['subject_feedback', 'teacher_feedback', 'class_organization', 'custom'],
+    enum: [
+      'subject_feedback',
+      'teacher_feedback',
+      'class_organization',
+      'custom',
+      'teacher_lesson_review',
+      'teacher_future_preferences'
+    ],
     required: false
   },
   
@@ -54,7 +61,7 @@ const PollSchema = new mongoose.Schema({
   },
   visibility: {
     type: String,
-    enum: ['public', 'group', 'faculty', 'program'],
+    enum: ['public', 'group', 'faculty', 'program', 'private'],
     default: 'public'
   },
   reward_points: {
@@ -97,7 +104,9 @@ const PollSchema = new mongoose.Schema({
     room: String,
     topic: String,
     lessonType: String,
-    time: String
+    time: String,
+    group: String,
+    groupId: String
   },
   lesson_date: {
     type: Date, // Дата конкретной пары (для type='organization')
@@ -143,7 +152,7 @@ const PollSchema = new mongoose.Schema({
   // ==================== ВОПРОСЫ ====================
   questions: [{
     id: {
-      type: mongoose.Schema.Types.Mixed,
+      type: Number,
       required: true
     },
     text: {
@@ -157,31 +166,33 @@ const PollSchema = new mongoose.Schema({
         'single_choice',
         'multiple_choice',
         'binary',
-        'text',
+        'text_short',
+        'text_long',
         // обратная совместимость
         'rating_1_5',
         'yes_no',
         'multiple_choice_old',
-        'text_long',
-        'text_short'
+        'text'
       ],
-      default: 'text'
-    },
-    options: [mongoose.Schema.Types.Mixed], // Для multiple_choice
-    scale: mongoose.Schema.Types.Mixed, // число звезд или массив подписей
-    labels: {
-      min: String,
-      max: String
+      default: 'text_short'
     },
     required: {
       type: Boolean,
       default: true
     },
-    maxLength: {
-      type: Number,
-      default: null
+    // rating
+    scale: { type: Number, default: 5 },
+    labels: {
+      min: String,
+      max: String
     },
-    followUp: mongoose.Schema.Types.Mixed // условные вопросы/branching
+    // choices
+    options: [String],
+    allowOther: { type: Boolean, default: false },
+    // text
+    maxLength: { type: Number, default: null },
+    // follow-up conditional
+    followUp: mongoose.Schema.Types.Mixed
   }],
   
   // ==================== ОТВЕТЫ С МЕТАДАННЫМИ ДЛЯ СРЕЗОВ ====================

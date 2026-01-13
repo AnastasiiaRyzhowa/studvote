@@ -7,6 +7,7 @@ router.get('/faculties', directoryController.getFaculties);
 router.get('/programs', directoryController.getPrograms);
 router.get('/courses', directoryController.getCourses);
 router.get('/groups', directoryController.getGroups);
+router.get('/teachers', directoryController.searchTeachers);
 
 module.exports = router;
 

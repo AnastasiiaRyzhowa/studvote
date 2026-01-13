@@ -199,7 +199,7 @@ exports.verifyCode = async (req, res) => {
  */
 exports.register = async (req, res) => {
   try {
-    const { tempToken, full_name, facultyId, programId, course, groupId, department } = req.body;
+    const { tempToken, full_name, facultyId, programId, course, groupId, department, ruz_teacher_id, ruz_teacher_name } = req.body;
 
     // Валидация tempToken
     if (!tempToken) {
@@ -225,8 +225,13 @@ exports.register = async (req, res) => {
 
     const { email, role } = decoded;
 
-    // Валидация общих полей
-    if (!full_name || full_name.trim().length < 2) {
+    // Валидация/заполнение ФИО
+    let normalizedFullName = full_name;
+    if (role === USER_ROLES.TEACHER && (!normalizedFullName || normalizedFullName.trim().length < 2) && ruz_teacher_name) {
+      normalizedFullName = ruz_teacher_name;
+    }
+
+    if (!normalizedFullName || normalizedFullName.trim().length < 2) {
       return res.status(400).json({ 
         success: false, 
         message: 'ФИО обязательно и должно содержать минимум 2 символа' 
@@ -245,7 +250,7 @@ exports.register = async (req, res) => {
     // Подготовка данных пользователя
     const userData = {
       email,
-      full_name: full_name.trim(),
+      full_name: normalizedFullName.trim(),
       role
     };
 
@@ -304,6 +309,14 @@ exports.register = async (req, res) => {
       }
 
       userData.department = department;
+      if (!ruz_teacher_id || !ruz_teacher_name) {
+        return res.status(400).json({
+          success: false,
+          message: 'Выберите преподавателя из поиска (РУЗ)'
+        });
+      }
+      userData.ruz_teacher_id = ruz_teacher_id;
+      userData.ruz_teacher_name = ruz_teacher_name;
       userData.subjects = [];
 
     } else if (role === USER_ROLES.ADMIN) {

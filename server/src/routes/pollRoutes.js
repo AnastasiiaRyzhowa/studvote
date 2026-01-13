@@ -11,9 +11,9 @@ const { authenticate } = require('../middleware/auth');
  * @route   GET /api/polls
  * @desc    Получить список опросов с фильтрацией
  * @query   status, visibility, page, limit
- * @access  Public
+ * @access  Private (требует аутентификации)
  */
-router.get('/', pollController.getPolls);
+router.get('/', authenticate, pollController.getPolls);
 
 /**
  * Защищенные роуты (требуют аутентификации)
@@ -32,9 +32,9 @@ router.post('/', authenticate, pollController.createPoll);
 /**
  * @route   GET /api/polls/counts
  * @desc    Получить количество опросов по каждому фильтру
- * @access  Public (но учитывает аутентификацию если есть)
+ * @access  Private (требует аутентификации)
  */
-router.get('/counts', pollController.getPollsCounts);
+router.get('/counts', authenticate, pollController.getPollsCounts);
 
 /**
  * @route   GET /api/polls/my/created
@@ -87,6 +87,13 @@ router.get('/:id/analyze', authenticate, pollController.analyzeResults);
  * @access  Private (authenticated users - только создатель или админ)
  */
 router.get('/:pollId/analytics', authenticate, pollController.getPollAnalytics);
+
+/**
+ * @route   GET /api/polls/:pollId/my-feedback-summary
+ * @desc    Получить персональную аналитику после голосования (сравнение с группой + AI инсайты)
+ * @access  Private (authenticated users - только студенты)
+ */
+router.get('/:pollId/my-feedback-summary', authenticate, pollController.getMyFeedbackSummary);
 
 /**
  * @route   GET /api/polls/:id

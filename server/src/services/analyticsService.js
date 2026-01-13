@@ -2,6 +2,24 @@
 
 const Poll = require('../models/Poll');
 
+const IKOP_THRESHOLDS = {
+  critical: 0.4,
+  attention: 0.6,
+  good: 0.8
+};
+
+const calcIkop = (avgRating) => {
+  if (!avgRating || Number.isNaN(avgRating)) {
+    return { score: 0, zone: 'no_data' };
+  }
+  const normalized = Math.max(0, Math.min(1, avgRating / 5));
+  let zone = 'critical';
+  if (normalized >= IKOP_THRESHOLDS.good) zone = 'excellent';
+  else if (normalized >= IKOP_THRESHOLDS.attention) zone = 'satisfactory';
+  else if (normalized >= IKOP_THRESHOLDS.critical) zone = 'attention';
+  return { score: Number(normalized.toFixed(3)), zone };
+};
+
 /**
  * Анализ результатов опроса с группировкой по категориям
  */
@@ -18,7 +36,8 @@ const analyzePollResults = async (pollId) => {
       byFaculty: {},
       byProgram: {},
       byCourse: {},
-      insights: []
+      insights: [],
+      ikop: { score: 0, zone: 'no_data' }
     };
   }
   
@@ -34,7 +53,10 @@ const analyzePollResults = async (pollId) => {
   // ==================== 4. ГРУППИРОВКА ПО КУРСАМ ====================
   const byCourse = groupByCourse(poll);
   
-  // ==================== 5. ИНСАЙТЫ ====================
+  // ==================== 5. ИКОП ====================
+  const ikop = deriveIkop(overall, poll);
+  
+  // ==================== 6. ИНСАЙТЫ ====================
   const insights = generateInsights(overall, byFaculty, byProgram, byCourse, poll.type);
   
   return {
@@ -43,6 +65,7 @@ const analyzePollResults = async (pollId) => {
     byProgram,
     byCourse,
     insights,
+    ikop,
     poll_type: poll.type
   };
 };
@@ -147,6 +170,27 @@ const calculateOverall = (poll) => {
   }
   
   return { total_responses };
+};
+
+const deriveIkop = (overall, poll) => {
+  if (!overall || !overall.total_responses) {
+    return { score: 0, zone: 'no_data' };
+  }
+  
+  if (typeof overall.average === 'number') {
+    return calcIkop(overall.average);
+  }
+  
+  if (overall.by_question) {
+    const values = Object.values(overall.by_question)
+      .map(q => q.average)
+      .filter(v => typeof v === 'number' && !Number.isNaN(v));
+    if (!values.length) return { score: 0, zone: 'no_data' };
+    const avg = values.reduce((s, v) => s + v, 0) / values.length;
+    return calcIkop(avg);
+  }
+  
+  return { score: 0, zone: 'no_data' };
 };
 
 /**
