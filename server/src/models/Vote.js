@@ -165,12 +165,21 @@ voteSchema.post('save', async function(doc) {
     const User = mongoose.model('User');
     
     // Начисляем баллы пользователю (если это студент)
-    await User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       doc.user_id,
-      {
-        $inc: { 'student_data.points': doc.points_earned }
-      }
+      { $inc: { 'student_data.points': doc.points_earned } },
+      { new: true }
     );
+    
+    // Обновляем уровень при необходимости
+    if (updatedUser) {
+      const newLevel = User.calculateLevel(updatedUser.student_data?.points || 0);
+      if (updatedUser.student_data?.level !== newLevel) {
+        await User.findByIdAndUpdate(doc.user_id, {
+          $set: { 'student_data.level': newLevel }
+        });
+      }
+    }
   } catch (error) {
     console.error('Ошибка при начислении баллов:', error);
   }

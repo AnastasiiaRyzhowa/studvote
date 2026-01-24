@@ -5,6 +5,8 @@ const Vote = require('../models/Vote');
 const Poll = require('../models/Poll');
 const User = require('../models/User');
 const GroupReliabilityEvent = require('../models/GroupReliabilityEvent');
+const studentAnalyticsService = require('../services/studentAnalyticsService');
+const userController = require('../controllers/userController');
 
 const isTeacher = (req, res, next) => {
   if (req.user.role !== 'teacher') {
@@ -275,6 +277,47 @@ router.get('/me/participation', authenticate, async (req, res) => {
   }
 });
 
+// GET /api/users/me/statistics - Моя статистика (для студентов)
+router.get('/me/statistics', authenticate, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const user = await User.findById(userId).lean();
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Пользователь не найден' });
+    }
+
+    // Только для студентов
+    if (user.role !== 'student') {
+      return res.status(403).json({ 
+        success: false, 
+        message: 'Эта страница доступна только студентам' 
+      });
+    }
+
+    const userGroup = user.group;
+    if (!userGroup) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'У вас не указана группа' 
+      });
+    }
+
+    const data = await studentAnalyticsService.getMyStatistics(userId, userGroup);
+
+    res.json({
+      success: true,
+      data
+    });
+  } catch (error) {
+    console.error('Ошибка загрузки статистики студента:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Не удалось загрузить статистику' 
+    });
+  }
+});
+
 // POST /api/users/reliability/:groupId/event - событие надёжности от преподавателя
 router.post('/reliability/:groupId/event', authenticate, isTeacher, async (req, res) => {
   try {
@@ -310,5 +353,8 @@ router.post('/reliability/:groupId/event', authenticate, isTeacher, async (req, 
     });
   }
 });
+
+// GET /api/users/leaderboard - Рейтинг студентов
+router.get('/leaderboard', authenticate, userController.getLeaderboard);
 
 module.exports = router;

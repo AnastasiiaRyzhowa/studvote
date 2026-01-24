@@ -19,10 +19,12 @@ const PollSchema = new mongoose.Schema({
   pollType: {
     type: String,
     enum: [
+      'lesson_review',  // Новый: опрос после пары (фиксированные 5 вопросов + комментарий)
+      'custom',         // Новый: кастомный опрос с гибкими вопросами
+      // Старые типы (для обратной совместимости)
       'subject_feedback',
       'teacher_feedback',
       'class_organization',
-      'custom',
       'teacher_lesson_review',
       'teacher_future_preferences'
     ],
@@ -59,6 +61,10 @@ const PollSchema = new mongoose.Schema({
     enum: ['immediate', 'after_vote', 'after_end'],
     default: 'immediate'
   },
+  allow_comments: {
+    type: Boolean,
+    default: false
+  },
   visibility: {
     type: String,
     enum: ['public', 'group', 'faculty', 'program', 'private'],
@@ -74,6 +80,70 @@ const PollSchema = new mongoose.Schema({
     default: 0,
     min: 0
   },
+  
+  // Для lesson_review: настройки чекбокса технических проблем
+  technicalIssues: {
+    enabled: { type: Boolean, default: false },
+    options: {
+      type: [String],
+      default: ['Проблемы с техникой', 'Проблемы с аудиторией', 'Другое']
+    }
+  },
+  
+  // ==================== СВОБОДНЫЕ ОПРОСЫ ====================
+  // Категория свободного опроса
+  category: {
+    type: String,
+    enum: ['organizational', 'academic', 'extracurricular', 'feedback'],
+    default: null
+  },
+  
+  // Теги для свободных опросов
+  tags: [{
+    type: String,
+    trim: true
+  }],
+  
+  // Целевая аудитория для свободных опросов
+  target_audience: {
+    type: {
+      type: String,
+      enum: ['all', 'faculty', 'program', 'course', 'group'],
+      default: 'all'
+    },
+    value: String  // Значение (например, имя факультета, программы, курса или группы)
+  },
+  
+  // Максимальное количество ответов (целевое количество)
+  max_responses: {
+    type: Number,
+    default: null
+  },
+
+  // Целевое количество (для охвата/админки). Если не задано — можно использовать max_responses/0.
+  target_count: {
+    type: Number,
+    default: 0
+  },
+  
+  // Имя создателя (кэш для быстрого доступа)
+  creator_name: {
+    type: String,
+    default: null
+  },
+  
+  // Дата закрытия опроса
+  closed_at: {
+    type: Date,
+    default: null
+  },
+
+  // Дубли (для совместимости с админкой/аналитикой)
+  discipline_name: { type: String, default: null },
+  group_id: { type: Number, default: null },
+  group_name: { type: String, default: null },
+  date: { type: String, default: null },
+  topic: { type: String, default: null },
   
   // ==================== ПРИВЯЗКА К УЧЕБНОМУ ПРОЦЕССУ ====================
   subject_id: {
@@ -98,15 +168,19 @@ const PollSchema = new mongoose.Schema({
   },
   lessonContext: {
     lessonId: String,
-    subject: String,
-    teacher: String,
-    date: Date,
-    room: String,
-    topic: String,
-    lessonType: String,
-    time: String,
-    group: String,
-    groupId: String
+    lessonOid: String,      // ID пары из РУЗ
+    subject: String,         // Название дисциплины
+    teacher: String,         // ФИО преподавателя
+    date: Date,              // Дата пары
+    time: String,            // Время пары "10:00-11:30"
+    beginLesson: String,     // Время начала "10:00"
+    endLesson: String,       // Время окончания "11:30"
+    topic: String,           // Тема пары
+    auditorium: String,      // Аудитория
+    room: String,            // Аудитория (для совместимости)
+    lessonType: String,      // Тип занятия (лекция, практика)
+    group: String,           // Название группы
+    groupId: String          // ID группы
   },
   lesson_date: {
     type: Date, // Дата конкретной пары (для type='organization')
@@ -135,6 +209,13 @@ const PollSchema = new mongoose.Schema({
   source_course: Number,
   source_group: String,
   
+  // ✅ ДОБАВЛЕНО: Поля для фильтрации lesson_review опросов в аналитике
+  faculty: { type: String, default: null },
+  faculty_name: { type: String, default: null },
+  program: { type: String, default: null },
+  program_name: { type: String, default: null },
+  course: { type: Number, default: null },
+  
   // ==================== ТАРГЕТИНГ (кому показывать) ====================
   target_groups: [{
     type: String // group_id из RUZ
@@ -151,10 +232,7 @@ const PollSchema = new mongoose.Schema({
   
   // ==================== ВОПРОСЫ ====================
   questions: [{
-    id: {
-      type: Number,
-      required: true
-    },
+    id: mongoose.Schema.Types.Mixed,  // String или Number (для гибкости)
     text: {
       type: String,
       required: true
@@ -162,23 +240,37 @@ const PollSchema = new mongoose.Schema({
     type: {
       type: String,
       enum: [
-        'rating',
+        'rating',           // Звезды 1-5 (для lesson_review и custom)
+        'yes_no',           // Да/Нет (для custom)
+        'choice',           // Выбор из списка (для custom)
+        'text',             // Текстовый ответ (для обоих типов)
+        // Старые типы (для обратной совместимости)
         'single_choice',
         'multiple_choice',
         'binary',
         'text_short',
         'text_long',
-        // обратная совместимость
         'rating_1_5',
-        'yes_no',
-        'multiple_choice_old',
-        'text'
+        'multiple_choice_old'
       ],
       default: 'text_short'
     },
     required: {
       type: Boolean,
       default: true
+    },
+    // Для lesson_review: вес вопроса для расчета ИКОП
+    weight: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 1
+    },
+    // Для lesson_review: блок вопроса (content/methodology)
+    block: {
+      type: String,
+      enum: ['content', 'methodology', 'other'],
+      default: 'other'
     },
     // rating
     scale: { type: Number, default: 5 },
@@ -206,9 +298,37 @@ const PollSchema = new mongoose.Schema({
     // Сами ответы (гибкая структура)
     answers: mongoose.Schema.Types.Mixed, 
     raw_responses: mongoose.Schema.Types.Mixed,
+    // Комментарий (для совместимости с UI админки/студента)
+    comment: {
+      type: String,
+      default: ''
+    },
     // Примеры:
     // Для одного вопроса: answers: 5
-    // Для нескольких: answers: { q1: 5, q2: 4, q3: "yes" }
+    // Для нескольких: answers: { q1_relevance: 5, q2_clarity: 4, q6_comment: "Отлично!" }
+    
+    // Для lesson_review: технические проблемы (опционально)
+    technical_issues: {
+      has_issues: { type: Boolean, default: false },
+      selected: [String],  // ["Проблемы с техникой", "Проблемы с аудиторией"]
+      description: String  // Описание проблемы
+    },
+    
+    // Для lesson_review: ИКОП (Индекс Качества Образовательного Процесса)
+    ikop: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: null
+    },
+
+    // Дубли для совместимости (админка ожидает student_metadata)
+    student_metadata: {
+      faculty: { type: String, default: '' },
+      program: { type: String, default: '' },
+      course: { type: Number, default: 0 },
+      group: { type: String, default: '' }
+    },
     
     // ============ МЕТАДАННЫЕ ДЛЯ СРЕЗОВ (КРИТИЧНО!) ============
     user_faculty: {
@@ -249,7 +369,7 @@ const PollSchema = new mongoose.Schema({
   // ==================== СТАТУС ====================
   status: {
     type: String,
-    enum: ['draft', 'active', 'completed'],
+    enum: ['draft', 'active', 'completed', 'closed', 'deleted'],
     default: 'active'
   },
   start_date: {
@@ -299,9 +419,16 @@ PollSchema.methods.isVisibleTo = function(user) {
     return true;
   }
   
-  // Проверяем группу
-  if (this.target_groups.length > 0 && user.group_id && this.target_groups.includes(user.group_id.toString())) {
-    return true;
+  // Проверяем группу (по group_id ИЛИ по названию group)
+  if (this.target_groups.length > 0) {
+    const userGroupId = user.group_id ? user.group_id.toString() : null;
+    const userGroupName = user.group;
+    
+    if (this.target_groups.some(tg => 
+      tg === userGroupId || tg === userGroupName
+    )) {
+      return true;
+    }
   }
   
   // Проверяем факультет
@@ -349,10 +476,11 @@ PollSchema.methods.addVote = async function(userId, answers, userMetadata) {
     });
   }
   
-  // Добавляем ответ с метаданными
+  // Добавляем ответ с метаданными (и дублируем student_metadata для совместимости)
   this.responses.push({
     user_id: userId,
     answers: answers,
+    comment: userMetadata?.comment || '',
     
     // Метаданные для срезов (с проверками на undefined)
     user_faculty: userMetadata?.faculty || 'unknown',
@@ -362,6 +490,12 @@ PollSchema.methods.addVote = async function(userId, answers, userMetadata) {
     user_course: userMetadata?.course || 0,
     user_group: userMetadata?.group_id ? userMetadata.group_id.toString() : (userMetadata?.group || 'unknown'),
     user_group_name: userMetadata?.group_name || userMetadata?.group || 'unknown',
+    student_metadata: {
+      faculty: userMetadata?.faculty || '',
+      program: userMetadata?.program || '',
+      course: userMetadata?.course || 0,
+      group: userMetadata?.group || userMetadata?.group_name || ''
+    },
     
     submitted_at: new Date()
   });
@@ -432,5 +566,51 @@ PollSchema.index({ 'target_groups': 1 });
 PollSchema.index({ subject_id: 1 });
 PollSchema.index({ teacher_id: 1 });
 PollSchema.index({ type: 1 });
+
+// ==================== MIDDLEWARE ====================
+PollSchema.pre('save', function () {
+  try {
+    // Синхронизация lessonContext -> дубли верхнего уровня (для админки)
+    if (this.lessonContext) {
+      if (!this.discipline_name && this.lessonContext.subject) this.discipline_name = this.lessonContext.subject;
+      if (!this.teacher_name && this.lessonContext.teacher) this.teacher_name = this.lessonContext.teacher;
+      if (!this.group_name && this.lessonContext.group) this.group_name = this.lessonContext.group;
+      // groupId может быть строкой
+      if (!this.group_id && this.lessonContext.groupId) this.group_id = Number(this.lessonContext.groupId) || this.group_id;
+      if (!this.topic && (this.lessonContext.topic || this.lessonContext.subject)) this.topic = this.lessonContext.topic || this.lessonContext.subject;
+      if (!this.date && this.lessonContext.date) {
+        // если date - Date, приводим к YYYY-MM-DD
+        if (this.lessonContext.date instanceof Date && !Number.isNaN(this.lessonContext.date.getTime())) {
+          const d = this.lessonContext.date;
+          const pad = (n) => String(n).padStart(2, '0');
+          this.date = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+        } else {
+          this.date = String(this.lessonContext.date);
+        }
+      }
+    }
+
+    // Синхронизация target_count (если не задан, можно подсказать из max_responses)
+    if ((!this.target_count || this.target_count === 0) && this.max_responses) {
+      this.target_count = this.max_responses;
+    }
+
+    // Синхронизация student_metadata из user_* полей (если responses обновились)
+    if (Array.isArray(this.responses)) {
+      this.responses.forEach((r) => {
+        if (!r.student_metadata || (!r.student_metadata.faculty && !r.student_metadata.program)) {
+          r.student_metadata = {
+            faculty: r.user_faculty || '',
+            program: r.user_program || '',
+            course: r.user_course || 0,
+            group: r.user_group || ''
+          };
+        }
+      });
+    }
+  } catch (e) {
+    // best-effort
+  }
+});
 
 module.exports = mongoose.model('Poll', PollSchema);

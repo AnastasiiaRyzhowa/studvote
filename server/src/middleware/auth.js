@@ -53,6 +53,15 @@ exports.authenticate = async (req, res, next) => {
       });
     }
 
+    // Проверка блокировки пользователя
+    // undefined считаем активным (для старых данных)
+    if (user.is_active === false) {
+      return res.status(403).json({
+        success: false,
+        message: 'Пользователь заблокирован'
+      });
+    }
+
     // Добавление информации о пользователе в запрос
     req.user = {
       userId: user._id,

@@ -10,25 +10,45 @@ const app = express();
 // Подключение к базам данных
 connectDB();
 
-// Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true
-}));
+// Логирование всех запросов (ДО CORS чтобы видеть все запросы)
+app.use((req, res, next) => {
+  console.log(`📥 ${req.method} ${req.url}`);
+  next();
+});
+
+// Middleware - CORS
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', process.env.FRONTEND_URL || 'http://localhost:3000');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  
+  next();
+});
+
 app.use(express.json());
 
 // Роуты
 const authRoutes = require('./routes/authRoutes');
 const pollRoutes = require('./routes/pollRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const adminUsersRoutes = require('./routes/admin/usersRoutes');
 const directoryRoutes = require('./routes/directoryRoutes');
 const scheduleRoutes = require('./routes/scheduleRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
 const userRoutes = require('./routes/userRoutes');
+const detailedAnalyticsRoutes = require('./routes/detailedAnalyticsRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/polls', pollRoutes);
+app.use('/api/admin/users', adminUsersRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/admin/analytics', detailedAnalyticsRoutes);
 app.use('/api/directory', directoryRoutes);
 app.use('/api/schedule', scheduleRoutes);
 app.use('/api/analytics', analyticsRoutes);

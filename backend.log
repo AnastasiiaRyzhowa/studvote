@@ -1,0 +1,851 @@
+
+> server@1.0.0 start
+> node src/server.js
+
+[dotenv@17.2.3] injecting env (15) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+
+🚀 ═══════════════════════════════════════════════════
+   Сервер StudVote запущен на порту 4000
+   http://localhost:4000
+   Environment: development
+═══════════════════════════════════════════════════
+
+Redis подключен успешно
+MongoDB подключен успешно
+База данных: studvote
+Redis готов к работе
+📥 submitVote вызван для опроса: 69686d72ecfd8931d7d88675
+   userId: new ObjectId('6962a0998a0fc98789a7a784')
+🔍 Проверка видимости опроса: new ObjectId('69686d72ecfd8931d7d88675')
+   poll.target_groups: [ 'ИБ24-1' ]
+   poll.target_faculties: []
+   user.group_id: 154810
+   user.group: ИБ24-1
+   user.faculty: Факультет информационных технологий и анализа больших данных
+   isVisible: true
+📥 submitVote вызван для опроса: 69686d72ecfd8931d7d88675
+   userId: new ObjectId('6962a0998a0fc98789a7a784')
+🔍 Проверка видимости опроса: new ObjectId('69686d72ecfd8931d7d88675')
+   poll.target_groups: [ 'ИБ24-1' ]
+   poll.target_faculties: []
+   user.group_id: 154810
+   user.group: ИБ24-1
+   user.faculty: Факультет информационных технологий и анализа больших данных
+   isVisible: true
+📥 submitVote вызван для опроса: 69686d72ecfd8931d7d88675
+   userId: new ObjectId('6962a0998a0fc98789a7a784')
+🔍 Проверка видимости опроса: new ObjectId('69686d72ecfd8931d7d88675')
+   poll.target_groups: [ 'ИБ24-1' ]
+   poll.target_faculties: []
+   user.group_id: 154810
+   user.group: ИБ24-1
+   user.faculty: Факультет информационных технологий и анализа больших данных
+   isVisible: true
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 3, completed: 12, myVotes: 12 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 3
+   После фильтрации: 3
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:47:08.999Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 3
+   Total count: 3
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 3, completed: 12, myVotes: 12 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 3
+   После фильтрации: 3
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:47:09.015Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 3
+   Total count: 3
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 3
+   После фильтрации: 3
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:47:09.023Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 3
+   Total count: 3
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 3
+   После фильтрации: 3
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:47:09.029Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 3
+   Total count: 3
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 3
+   После фильтрации: 3
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:47:11.692Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 3
+   Total count: 3
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 3, completed: 12, myVotes: 12 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 3
+   После фильтрации: 3
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:47:11.708Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 3
+   Total count: 3
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 3, completed: 12, myVotes: 12 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 3
+   После фильтрации: 3
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:47:11.720Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 3
+   Total count: 3
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 3
+   После фильтрации: 3
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:47:11.741Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 3
+   Total count: 3
+📥 submitVote вызван для опроса: 69686c50ecfd8931d7d88510
+   userId: new ObjectId('6962a0998a0fc98789a7a784')
+🔍 Проверка видимости опроса: new ObjectId('69686c50ecfd8931d7d88510')
+   poll.target_groups: [ 'ИБ24-1' ]
+   poll.target_faculties: []
+   user.group_id: 154810
+   user.group: ИБ24-1
+   user.faculty: Факультет информационных технологий и анализа больших данных
+   isVisible: true
+📥 submitVote вызван для опроса: 69686c50ecfd8931d7d88510
+   userId: new ObjectId('6962a0998a0fc98789a7a784')
+🔍 Проверка видимости опроса: new ObjectId('69686c50ecfd8931d7d88510')
+   poll.target_groups: [ 'ИБ24-1' ]
+   poll.target_faculties: []
+   user.group_id: 154810
+   user.group: ИБ24-1
+   user.faculty: Факультет информационных технологий и анализа больших данных
+   isVisible: true
+✅ Начислено 10 баллов пользователю Миронов Иван. Причина: Участие в опросе: Физические явления и процессы в области информационной безопасности - Занятие
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 2
+   После фильтрации: 2
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:06.318Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 2
+   Total count: 2
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 2, completed: 13, myVotes: 13 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 2
+   После фильтрации: 2
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:06.326Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 2
+   Total count: 2
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 2, completed: 13, myVotes: 13 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 2
+   После фильтрации: 2
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:06.335Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 2
+   Total count: 2
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 2
+   После фильтрации: 2
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:06.341Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 2
+   Total count: 2
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 2
+   После фильтрации: 2
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:08.925Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 2
+   Total count: 2
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 2, completed: 13, myVotes: 13 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 2
+   После фильтрации: 2
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:08.939Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 2
+   Total count: 2
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 2, completed: 13, myVotes: 13 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 2
+   После фильтрации: 2
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:08.952Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 2
+   Total count: 2
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 2
+   После фильтрации: 2
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:08.961Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 2
+   Total count: 2
+📥 submitVote вызван для опроса: 69686c78ecfd8931d7d885eb
+   userId: new ObjectId('6962a0998a0fc98789a7a784')
+🔍 Проверка видимости опроса: new ObjectId('69686c78ecfd8931d7d885eb')
+   poll.target_groups: [ 'ИБ24-1' ]
+   poll.target_faculties: []
+   user.group_id: 154810
+   user.group: ИБ24-1
+   user.faculty: Факультет информационных технологий и анализа больших данных
+   isVisible: true
+✅ Начислено 10 баллов пользователю Миронов Иван. Причина: Участие в опросе: Электротехника - Занятие
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 1
+   После фильтрации: 1
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:19.962Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 1
+   Total count: 1
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 1, completed: 14, myVotes: 14 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 1
+   После фильтрации: 1
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:19.982Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 1
+   Total count: 1
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 1, completed: 14, myVotes: 14 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 1
+   После фильтрации: 1
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:19.988Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 1
+   Total count: 1
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 1
+   После фильтрации: 1
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:19.994Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 1
+   Total count: 1
+📥 submitVote вызван для опроса: 69686d72ecfd8931d7d88675
+   userId: new ObjectId('6962a0998a0fc98789a7a784')
+🔍 Проверка видимости опроса: new ObjectId('69686d72ecfd8931d7d88675')
+   poll.target_groups: [ 'ИБ24-1' ]
+   poll.target_faculties: []
+   user.group_id: 154810
+   user.group: ИБ24-1
+   user.faculty: Факультет информационных технологий и анализа больших данных
+   isVisible: true
+✅ Начислено 10 баллов пользователю Миронов Иван. Причина: Участие в опросе: Основы программно-аппаратной защиты информации - Занятие
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:34.611Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:34.623Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:34.630Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:34.635Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📋 POLLS DEBUG:
+   Filter: completed
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"voted_users":"6962a0998a0fc98789a7a784"}
+   Found polls: 21
+   Total count: 21
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:38.627Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:38.643Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:38.648Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:38.652Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📋 POLLS DEBUG:
+   Filter: completed
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"voted_users":"6962a0998a0fc98789a7a784"}
+   Found polls: 21
+   Total count: 21
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:45.681Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:45.692Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:45.696Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:45.701Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📋 POLLS DEBUG:
+   Filter: completed
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"voted_users":"6962a0998a0fc98789a7a784"}
+   Found polls: 21
+   Total count: 21
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:50.142Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:50.150Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:50.154Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:54:50.158Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📋 POLLS DEBUG:
+   Filter: completed
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"voted_users":"6962a0998a0fc98789a7a784"}
+   Found polls: 21
+   Total count: 21
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:55:00.128Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:55:00.141Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:55:00.146Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:55:00.150Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:55:04.274Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:55:04.287Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:55:04.292Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T04:55:04.297Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+MongoDB отключен
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T05:18:01.022Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T05:18:01.035Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+📊 COUNTS DEBUG:
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   User role: student
+   User group: ИБ24-1 154810
+   Base query: {"$or":[{"pollType":"custom"},{"$or":[{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"}]}]}
+   Counts: { all: 0, active: 0, completed: 15, myVotes: 15 }
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T05:18:01.041Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+🔒 Дополнительная фильтрация через isVisibleTo():
+   До фильтрации: 0
+   После фильтрации: 0
+📋 POLLS DEBUG:
+   Filter: active
+   User ID: new ObjectId('6962a0998a0fc98789a7a784')
+   Query: {"$and":[{"status":"active","pollType":{"$nin":["teacher_lesson_review","teacher_future_preferences"]},"end_date":{"$gt":"2026-01-15T05:18:01.048Z"},"voted_users":{"$ne":"6962a0998a0fc98789a7a784"}},{"$or":[{"$and":[{"$or":[{"target_groups":{"$exists":false}},{"target_groups":{"$size":0}}]},{"$or":[{"target_faculties":{"$exists":false}},{"target_faculties":{"$size":0}}]},{"$or":[{"target_programs":{"$exists":false}},{"target_programs":{"$size":0}}]},{"$or":[{"target_courses":{"$exists":false}},{"target_courses":{"$size":0}}]}]},{"target_groups":"ИБ24-1"},{"target_groups":154810},{"target_groups":"154810"},{"lessonContext.group":"ИБ24-1"},{"lessonContext.groupId":"ИБ24-1"},{"target_faculties":"Факультет информационных технологий и анализа больших данных"},{"target_programs":"Информационная безопасность"},{"target_courses":2}]}]}
+   Found polls: 0
+   Total count: 0
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 437260
+📬 Message ID: <928865a3-cc81-dde8-4156-47e83c8fbfaa@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 177047
+📬 Message ID: <0ceb9412-cdcb-977f-a4d1-c81167590208@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 506387
+📬 Message ID: <ba766bc4-5e14-66de-7bba-60e8b086cd10@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: 565566@edu.fa.ru
+🔑 Код: 744330
+📬 Message ID: <fabdf93b-9835-55d7-80b5-259f6d728e45@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 244775
+📬 Message ID: <7b0af3cd-65af-9aff-d71d-334b16a96da6@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 896853
+📬 Message ID: <72f859a9-fc69-e4b6-3860-097bc44b2b12@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 206664
+📬 Message ID: <01cce355-10fa-8187-7646-34bad199052a@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 115804
+📬 Message ID: <58140402-5220-9c6d-e610-616c2120901b@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 205142
+📬 Message ID: <7a465b43-5ef7-8645-865f-bb86b7dfeb93@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 538220
+📬 Message ID: <37efd8c8-08e7-d28d-1789-0c4b65b1e67b@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 176101
+📬 Message ID: <f888b714-e617-e45c-0c8a-3f62a5068619@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: 234586@edu.fa.ru
+🔑 Код: 781494
+📬 Message ID: <5a6bce99-a9ca-4e29-6c2d-8567a1ac9bda@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: 234586@edu.fa.ru
+🔑 Код: 411807
+📬 Message ID: <e5c314cf-3ea6-a794-d43e-b2e8760499c5@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 131510
+📬 Message ID: <b3fc37c8-8044-dbd1-c87c-367ecf6a9af1@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: 123456@edu.fa.ru
+🔑 Код: 856294
+📬 Message ID: <7762629c-5486-650e-c092-01935767e0a5@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 929106
+📬 Message ID: <913fea9d-f8d5-d046-1273-5b71017446d3@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 803670
+📬 Message ID: <9fa80c4f-b41e-15a9-fd79-bdb9edea456c@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 797146
+📬 Message ID: <f4fc5a67-4411-3dd4-21c7-0453c055f3eb@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: admin@fa.ru
+🔑 Код: 999678
+📬 Message ID: <a3c8de3b-4136-9a46-40e2-46c8f09cc6c7@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: 216890@edu.fa.ru
+🔑 Код: 285581
+📬 Message ID: <68142d7c-4e53-17b9-fa8d-42c6dad39b3f@yandex.ru>
+═══════════════════════════════════════════════════
+
+
+✅ ═══════════════════════════════════════════════════
+📧 Email успешно отправлен!
+📨 Получатель: 216890@edu.fa.ru
+🔑 Код: 992051
+📬 Message ID: <701df08b-b60e-b5b2-1fff-17c1e443add9@yandex.ru>
+═══════════════════════════════════════════════════
+

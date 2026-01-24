@@ -87,6 +87,15 @@ exports.requestCode = async (req, res) => {
     // Генерация кода
     const code = generateCode();
 
+    // 🔑 ЛОГИРОВАНИЕ КОДА ДЛЯ РАЗРАБОТКИ
+    console.log('\n🔐 ════════════════════════════════════════════════');
+    console.log('📧 Запрос кода авторизации');
+    console.log(`📨 Email: ${email}`);
+    console.log(`🔑 КОД: ${code}`);
+    console.log(`👤 Роль: ${role}`);
+    console.log('⏱️  Срок действия: 5 минут');
+    console.log('════════════════════════════════════════════════\n');
+
     // Сохранение в Redis с TTL 5 минут
     const redisKey = `auth:code:${email.toLowerCase()}`;
     await redis.setex(redisKey, CODE_EXPIRATION, JSON.stringify({
@@ -142,7 +151,9 @@ exports.verifyCode = async (req, res) => {
 
     const { code: storedCode, role } = JSON.parse(storedData);
 
-    if (code !== storedCode) {
+    // В dev режиме принимаем любой 6-значный код
+    const isDev = process.env.NODE_ENV === 'development';
+    if (!isDev && code !== storedCode) {
       return res.status(400).json({ 
         success: false, 
         message: 'Неверный код подтверждения' 
@@ -156,6 +167,24 @@ exports.verifyCode = async (req, res) => {
     const user = await User.findOne({ email: email.toLowerCase() });
 
     if (user) {
+      // Заблокированный пользователь не может входить в систему
+      if (user.is_active === false) {
+        return res.status(403).json({
+          success: false,
+          message: 'Пользователь заблокирован'
+        });
+      }
+
+      // Синхронизируем баллы перед входом (для студентов)
+      if (user.role === 'student' && typeof user.syncPoints === 'function') {
+        user.syncPoints();
+      }
+
+      // Обновляем last_login
+      user.last_login = new Date();
+      // Используем validateModifiedOnly для проверки только измененных полей
+      await user.save({ validateModifiedOnly: true });
+
       // Пользователь существует - генерируем токен и входим
       const token = generateToken(user._id, user.role);
       
@@ -299,6 +328,24 @@ exports.register = async (req, res) => {
       userData.group = group.name;
       userData.group_id = group.id;
 
+      // Инициализация геймификации (оба места для совместимости)
+      userData.student_data = {
+        points: 0,
+        level: 1,
+        badges: [],
+        streak_days: 0
+      };
+      userData.points = 0;
+      userData.level = 1;
+      userData.badges = [];
+      
+      // Инициализация счётчиков активности
+      userData.votes_count = 0;
+      userData.polls_created_count = 0;
+      userData.comments_count = 0;
+      userData.polls_participated = [];
+      userData.polls_created = [];
+
     } else if (role === USER_ROLES.TEACHER) {
       // Преподаватель
       if (!department || !DEPARTMENTS.includes(department)) {
@@ -362,6 +409,7 @@ exports.register = async (req, res) => {
  */
 exports.getMe = async (req, res) => {
   try {
+    // Убрали .populate для badges, так как модель Badge не существует
     const user = await User.findById(req.user.userId);
     
     if (!user) {
@@ -370,6 +418,24 @@ exports.getMe = async (req, res) => {
         message: 'Пользователь не найден' 
       });
     }
+
+    // Проверка блокировки
+    if (user.is_active === false) {
+      return res.status(403).json({ 
+        success: false,
+        message: 'Пользователь заблокирован' 
+      });
+    }
+
+    // Синхронизируем баллы/уровень/бейджи перед отправкой (совместимость)
+    if (user.role === 'student' && typeof user.syncPoints === 'function') {
+      user.syncPoints();
+    }
+
+    // Обновляем last_login
+    user.last_login = new Date();
+    // Используем validateModifiedOnly для проверки только измененных полей
+    await user.save({ validateModifiedOnly: true });
 
     res.json({
       success: true,

@@ -23,6 +23,8 @@ const sendVerificationCode = async (email, code) => {
     // Если SMTP не сконфигурирован или дев-режим — не падаем, логируем и возвращаем успех (mock)
     if (!process.env.EMAIL_HOST || !process.env.EMAIL_PORT || !process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
       console.warn('⚠️ SMTP не сконфигурирован, отправка кода пропущена (mock).');
+      console.log('📧 Email:', email);
+      console.log('🔑 КОД:', code);
       return true;
     }
 

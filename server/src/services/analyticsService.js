@@ -167,6 +167,58 @@ const calculateOverall = (poll) => {
       distribution: sorted,
       winner: sorted[0]
     };
+  } else if (poll.type === 'form') {
+    // Для форм (новые опросы) - анализ по вопросам
+    const avgRatings = {};
+    const distributionPerQuestion = {};
+    const questionTexts = {};
+    const overallDistribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    let totalRatings = 0;
+    
+    // Обрабатываем каждый вопрос
+    poll.questions?.forEach(q => {
+      questionTexts[q.id] = q.text;
+      
+      if (q.type === 'rating' || q.type === 'rating_1_5') {
+        // Собираем все оценки по этому вопросу
+        const ratings = [];
+        poll.responses.forEach(r => {
+          const value = r.answers?.[q.id];
+          if (value && typeof value === 'number' && value >= 1 && value <= 5) {
+            ratings.push(value);
+          }
+        });
+        
+        if (ratings.length > 0) {
+          // Средняя оценка
+          const sum = ratings.reduce((acc, val) => acc + val, 0);
+          avgRatings[q.id] = parseFloat((sum / ratings.length).toFixed(2));
+          
+          // Распределение для этого вопроса
+          const dist = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+          ratings.forEach(val => {
+            dist[val]++;
+          });
+          distributionPerQuestion[q.id] = dist;
+          
+          // Добавляем в общее распределение
+          ratings.forEach(val => {
+            overallDistribution[val]++;
+            totalRatings++;
+          });
+        }
+      }
+    });
+    
+    return {
+      total_responses,
+      totalResponses: total_responses,
+      targetStudents: poll.target_groups?.length > 0 ? null : null,
+      avgRatings,
+      distribution: overallDistribution,
+      distributionPerQuestion,
+      questionTexts
+    };
   }
   
   return { total_responses };

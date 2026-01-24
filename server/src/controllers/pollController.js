@@ -121,63 +121,178 @@ const buildTemplateQuestions = (pollType, context) => {
       };
     case 'class_organization':
       return {
-        title: 'Оценка организации занятия',
-        description: `${context.dateLabel} | Аудитория ${context.room || '—'}`,
-        is_anonymous: false,
-        reward_points: 3,
-        show_results: 'immediate',
+        title: `Оценка занятия: ${context.subject || 'Занятие'}`,
+        description: `${context.teacher || ''} | ${context.dateLabel || ''} | ${context.room || ''}`,
+        is_anonymous: true,
+        reward_points: 5,
+        show_results: 'after_vote',
         minResponsesForResults: 0,
         questions: [
           {
             id: 1,
-            text: 'Техническое оснащение (проектор, микрофоны, доска)',
+            text: 'Насколько актуальна тема для твоей будущей работы?',
+            type: 'rating',
+            scale: 5,
+            labels: { min: 'Совсем не актуально', max: 'Очень актуально' },
+            required: true
+          },
+          {
+            id: 2,
+            text: 'Насколько понятно объяснили материал?',
+            type: 'rating',
+            scale: 5,
+            labels: { min: 'Непонятно', max: 'Очень понятно' },
+            required: true
+          },
+          {
+            id: 3,
+            text: 'Достаточно ли практики/примеров?',
+            type: 'rating',
+            scale: 5,
+            labels: { min: 'Очень мало', max: 'Достаточно' },
+            required: true
+          },
+          {
+            id: 4,
+            text: 'Насколько преподаватель смог заинтересовать и вовлечь?',
+            type: 'rating',
+            scale: 5,
+            labels: { min: 'Совсем не вовлек', max: 'Очень вовлек' },
+            required: true
+          },
+          {
+            id: 5,
+            text: 'Как оцениваешь организацию пары (структура, темп)?',
             type: 'rating',
             scale: 5,
             labels: { min: 'Плохо', max: 'Отлично' },
             required: true
           },
           {
-            id: 2,
-            text: 'Комфорт в аудитории (температура, освещение, шум)',
-            type: 'rating',
-            scale: 5,
-            labels: { min: 'Неудобно', max: 'Комфортно' },
-            required: true
+            id: 6,
+            text: 'Что понравилось? Что улучшить?',
+            type: 'text_long',
+            maxLength: 500,
+            required: false
           },
           {
-            id: 3,
-            text: 'Были ли технические проблемы?',
+            id: 7,
+            text: 'Были проблемы с техникой/аудиторией',
             type: 'binary',
             options: ['Да', 'Нет'],
-            required: true,
+            required: false,
             followUp: {
               condition: {
                 type: 'equals',
                 value: 'Да'
               },
               question: {
-                id: 31,
-                text: 'Какие именно проблемы были?',
+                id: 71,
+                text: 'Какие проблемы были?',
                 type: 'multiple_choice',
                 options: [
-                  'Проблемы с проектором',
-                  'Нет звука/микрофона',
-                  'Нет WiFi',
-                  'Проблемы с температурой',
-                  'Плохое освещение',
+                  'Проблемы с техникой',
+                  'Проблемы с аудиторией',
                   'Другое'
                 ],
                 allowOther: true,
-                required: true
+                required: false
               }
             }
+          }
+        ]
+      };
+    case 'lesson_review':
+      return {
+        title: `${context.subject || 'Занятие'} - ${context.topic || 'Занятие'}`,
+        description: `${context.teacher || ''} | ${context.dateLabel || ''} | ${context.room || ''}`,
+        is_anonymous: false,
+        reward_points: 5,
+        show_results: 'after_vote',
+        minResponsesForResults: 0,
+        questions: [
+          {
+            id: 1,
+            text: 'Насколько актуальна тема для твоей будущей работы?',
+            type: 'rating',
+            scale: 5,
+            labels: { min: 'Неактуально', max: 'Очень актуально' },
+            required: true,
+            weight: 0.25,
+            block: 'content'
+          },
+          {
+            id: 2,
+            text: 'Насколько понятно объяснили материал?',
+            type: 'rating',
+            scale: 5,
+            labels: { min: 'Непонятно', max: 'Очень понятно' },
+            required: true,
+            weight: 0.30,
+            block: 'content'
+          },
+          {
+            id: 3,
+            text: 'Достаточно ли практики/примеров?',
+            type: 'rating',
+            scale: 5,
+            labels: { min: 'Мало', max: 'Достаточно' },
+            required: true,
+            weight: 0.20,
+            block: 'content'
           },
           {
             id: 4,
-            text: 'Дополнительные комментарии',
-            type: 'text_short',
-            maxLength: 200,
-            required: false
+            text: 'Насколько преподаватель смог заинтересовать и вовлечь?',
+            type: 'rating',
+            scale: 5,
+            labels: { min: 'Совсем не вовлекал', max: 'Очень вовлекал' },
+            required: true,
+            weight: 0.15,
+            block: 'methodology'
+          },
+          {
+            id: 5,
+            text: 'Как оцениваешь организацию пары (структура, темп)?',
+            type: 'rating',
+            scale: 5,
+            labels: { min: 'Плохо', max: 'Отлично' },
+            required: true,
+            weight: 0.10,
+            block: 'methodology'
+          },
+          {
+            id: 6,
+            text: 'Что понравилось? Что улучшить?',
+            type: 'text_long',
+            maxLength: 500,
+            required: false,
+            block: 'other'
+          },
+          {
+            id: 7,
+            text: 'Были проблемы с техникой/аудиторией',
+            type: 'binary',
+            options: ['Да', 'Нет'],
+            required: false,
+            followUp: {
+              condition: {
+                type: 'equals',
+                value: 'Да'
+              },
+              question: {
+                id: 71,
+                text: 'Какие проблемы были?',
+                type: 'multiple_choice',
+                options: [
+                  'Проблемы с техникой',
+                  'Проблемы с аудиторией',
+                  'Другое'
+                ],
+                allowOther: true,
+                required: false
+              }
+            }
           }
         ]
       };
@@ -384,11 +499,20 @@ exports.getPolls = async (req, res) => {
     let query = {};
     let roleScope = [];
     
+    // Базовое исключение удалённых и черновиков
+    query.status = { $nin: ['deleted', 'draft'] };
+    
+    // Для студентов исключаем teacher-опросы
+    if (req.user?.role === 'student') {
+      query.pollType = { $nin: ['teacher_lesson_review', 'teacher_future_preferences'] };
+    }
+    
     // Применяем фильтр
     switch(filter) {
       case 'active':
         // Активные опросы: пользователь НЕ голосовал И дедлайн не прошел
         query = {
+          ...query, // сохраняем базовый фильтр (status $nin, pollType)
           status: 'active',
           end_date: { $gt: now },
           ...(userId ? { voted_users: { $ne: userId } } : {})
@@ -397,21 +521,50 @@ exports.getPolls = async (req, res) => {
         if (req.user?.role === 'student' && !showAll) {
           const g = currentUser?.group;
           const gid = currentUser?.group_id;
+          const faculty = currentUser?.faculty;
+          const program = currentUser?.program;
+          const course = currentUser?.course;
+          
           const visibilityOr = [
-            { pollType: 'custom' }, // Кастомные опросы видны всем
+            // Публичные опросы (без таргетинга) - все массивы пустые
+            {
+              $and: [
+                { $or: [{ target_groups: { $exists: false } }, { target_groups: { $size: 0 } }] },
+                { $or: [{ target_faculties: { $exists: false } }, { target_faculties: { $size: 0 } }] },
+                { $or: [{ target_programs: { $exists: false } }, { target_programs: { $size: 0 } }] },
+                { $or: [{ target_courses: { $exists: false } }, { target_courses: { $size: 0 } }] }
+              ]
+            }
           ];
           
-          // Опросы для группы студента (любого типа)
-          const groupConditions = [
-            g ? { target_groups: g } : null,
-            gid ? { target_groups: gid } : null,
-            gid ? { target_groups: String(gid) } : null,
-            g ? { 'lessonContext.group': g } : null,
-            (g || gid) ? { 'lessonContext.groupId': (g || gid).toString() } : null
-          ].filter(Boolean);
+          // Опросы для группы студента
+          if (g || gid) {
+            const groupConditions = [
+              g ? { target_groups: g } : null,
+              gid ? { target_groups: gid } : null,
+              gid ? { target_groups: String(gid) } : null,
+              g ? { 'lessonContext.group': g } : null,
+              (g || gid) ? { 'lessonContext.groupId': (g || gid).toString() } : null
+            ].filter(Boolean);
+            
+            if (groupConditions.length) {
+              visibilityOr.push(...groupConditions);
+            }
+          }
           
-          if (groupConditions.length) {
-            visibilityOr.push({ $or: groupConditions });
+          // Опросы для факультета студента
+          if (faculty) {
+            visibilityOr.push({ target_faculties: faculty });
+          }
+          
+          // Опросы для программы студента
+          if (program) {
+            visibilityOr.push({ target_programs: program });
+          }
+          
+          // Опросы для курса студента
+          if (course) {
+            visibilityOr.push({ target_courses: course });
           }
           
           roleScope.push({ $or: visibilityOr });
@@ -539,13 +692,27 @@ exports.getPolls = async (req, res) => {
     // Подсчет общего количества
     const total = await Poll.countDocuments(query);
 
-  // Для каждого опроса добавляем информацию о голосовании текущего пользователя
-  const pollsWithVoteInfo = polls.map(poll => ({
-    ...poll,
-    has_voted: userId ? poll.voted_users.some(
-      id => id.toString() === userId.toString()
-    ) : false
-  }));
+    // Дополнительная фильтрация через isVisibleTo() для студентов
+    let filteredPolls = polls;
+    if (req.user?.role === 'student' && currentUser && filter === 'active') {
+      filteredPolls = polls.filter(poll => {
+        // Создаем временный документ Poll для использования метода isVisibleTo()
+        const pollDoc = new Poll(poll);
+        return pollDoc.isVisibleTo(currentUser);
+      });
+      
+      console.log('🔒 Дополнительная фильтрация через isVisibleTo():');
+      console.log('   До фильтрации:', polls.length);
+      console.log('   После фильтрации:', filteredPolls.length);
+    }
+
+    // Для каждого опроса добавляем информацию о голосовании текущего пользователя
+    const pollsWithVoteInfo = filteredPolls.map(poll => ({
+      ...poll,
+      has_voted: userId ? poll.voted_users.some(
+        id => id.toString() === userId.toString()
+      ) : false
+    }));
 
     console.log('📋 POLLS DEBUG:');
     console.log('   Filter:', filter);
@@ -586,11 +753,16 @@ exports.getPollsCounts = async (req, res) => {
     const now = new Date();
 
     // Базовый query с учетом роли пользователя
-    let baseQuery = {};
+    let baseQuery = {
+      status: { $nin: ['deleted', 'draft'] } // Исключаем удалённые и черновики
+    };
     const roleScope = [];
     
     if (req.user?.role === 'student') {
-      // Для студентов показываем только custom опросы или опросы их группы
+      // Для студентов исключаем teacher-опросы
+      baseQuery.pollType = { $nin: ['teacher_lesson_review', 'teacher_future_preferences'] };
+      
+      // Показываем только custom опросы или опросы их группы
       roleScope.push({ pollType: 'custom' });
       const g = currentUser?.group;
       const gid = currentUser?.group_id;
@@ -1361,9 +1533,20 @@ exports.vote = async (req, res) => {
       // Начисляем баллы пользователю
       const reward = poll.reward_points || 0;
       if (reward > 0 && fullUser?.role === 'student') {
-        await User.findByIdAndUpdate(req.user.userId, {
-          $inc: { 'student_data.points': reward }
-        });
+        const updatedUser = await User.findByIdAndUpdate(
+          req.user.userId,
+          { $inc: { 'student_data.points': reward } },
+          { new: true }
+        );
+        if (updatedUser) {
+          const newLevel = User.calculateLevel(updatedUser.student_data?.points || 0);
+          if (updatedUser.student_data?.level !== newLevel) {
+            await User.findByIdAndUpdate(req.user.userId, {
+              $set: { 'student_data.level': newLevel }
+            });
+            console.log(`🎖️ Уровень обновлён: ${updatedUser.student_data?.level} → ${newLevel}`);
+          }
+        }
       }
       
       // Обновляем кэш аналитики (асинхронно)
@@ -1443,12 +1626,25 @@ exports.vote = async (req, res) => {
     const answersData = option_ids.length === 1 ? option_ids[0] : option_ids;
     await poll.addVote(req.user.userId, answersData, userMetadata);
 
-    // Начисляем баллы пользователю
+    // Начисляем баллы пользователю (совместимость: синхронизируем student_data.points <-> points)
     const reward = poll.reward_points || 10;
     if (reward > 0 && fullUser?.role === 'student') {
-    await User.findByIdAndUpdate(req.user.userId, {
-        $inc: { 'student_data.points': reward }
-    });
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user.userId,
+        { $inc: { 'student_data.points': reward } },
+        { new: true }
+      );
+      if (updatedUser) {
+        const newLevel = User.calculateLevel(updatedUser.student_data?.points || 0);
+        if (updatedUser.student_data?.level !== newLevel) {
+          await User.findByIdAndUpdate(req.user.userId, {
+            $set: { 'student_data.level': newLevel }
+          });
+          console.log(`🎖️ Уровень обновлён: ${updatedUser.student_data?.level} → ${newLevel}`);
+        }
+      }
+      // Счётчик активности (best-effort)
+      await User.findByIdAndUpdate(req.user.userId, { $inc: { votes_count: 1 } });
     }
 
     // Собираем быстрый аналитический ответ для студента
@@ -1485,6 +1681,171 @@ exports.vote = async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || 'Ошибка при голосовании'
+    });
+  }
+};
+
+/**
+ * Упрощенное голосование с начислением баллов (для новых опросов)
+ * POST /api/polls/:id/vote
+ */
+exports.submitVote = async (req, res) => {
+  try {
+    const pollId = req.params.id || req.params.pollId; // Поддержка обоих форматов
+    const { answers, comment, technical_issues } = req.body;
+    const userId = req.user.userId;
+    
+    console.log('📥 submitVote вызван для опроса:', pollId);
+    console.log('   userId:', userId);
+    console.log('   answers:', JSON.stringify(answers, null, 2));
+    console.log('   comment:', comment);
+    
+    const poll = await Poll.findById(pollId);
+    
+    if (!poll) {
+      return res.status(404).json({ 
+        success: false,
+        error: 'Опрос не найден' 
+      });
+    }
+    
+    // Проверка активности
+    if (!poll.isActive()) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Опрос завершён или ещё не начался' 
+      });
+    }
+    
+    // Проверка на повторное голосование
+    if (poll.hasVoted(userId)) {
+      return res.status(400).json({ 
+        success: false,
+        error: 'Вы уже проголосовали в этом опросе' 
+      });
+    }
+    
+    // Проверка видимости для пользователя
+    const user = await User.findById(userId);
+    const isVisible = poll.isVisibleTo(user);
+    
+    console.log('🔍 Проверка видимости опроса:', poll._id);
+    console.log('   poll.target_groups:', poll.target_groups);
+    console.log('   poll.target_faculties:', poll.target_faculties);
+    console.log('   user.group_id:', user.group_id);
+    console.log('   user.group:', user.group);
+    console.log('   user.faculty:', user.faculty);
+    console.log('   isVisible:', isVisible);
+    
+    if (!isVisible) {
+      return res.status(403).json({ 
+        success: false,
+        error: 'Этот опрос не предназначен для вас' 
+      });
+    }
+    
+    // Структурирование ответов для lesson_review
+    let formattedAnswers = answers;
+    
+    console.log('📥 Backend получил answers:', JSON.stringify(answers, null, 2));
+    console.log('   Тип:', typeof answers, 'isArray:', Array.isArray(answers));
+    
+    if (poll.pollType === 'lesson_review') {
+      // Преобразуем массив или объект в структуру Q1-Q5
+      if (Array.isArray(answers)) {
+        formattedAnswers = {
+          Q1: answers[0] || null,
+          Q2: answers[1] || null,
+          Q3: answers[2] || null,
+          Q4: answers[3] || null,
+          Q5: answers[4] || null
+        };
+      } else if (typeof answers === 'object') {
+        // Поддержка формата {q1, q2, q3, q4, q5} или {Q1, Q2, Q3, Q4, Q5}
+        formattedAnswers = {
+          Q1: answers.Q1 || answers.q1 || null,
+          Q2: answers.Q2 || answers.q2 || null,
+          Q3: answers.Q3 || answers.q3 || null,
+          Q4: answers.Q4 || answers.q4 || null,
+          Q5: answers.Q5 || answers.q5 || null
+        };
+      }
+      
+      // Валидация: все 5 вопросов обязательны для lesson_review
+      console.log('🔍 Валидация answers для lesson_review:', formattedAnswers);
+      
+      const requiredQuestions = ['Q1', 'Q2', 'Q3', 'Q4', 'Q5'];
+      for (const q of requiredQuestions) {
+        const value = parseInt(formattedAnswers[q]);  // Преобразуем в число
+        console.log(`   ${q}:`, formattedAnswers[q], '→', value);
+        
+        if (!value || value < 1 || value > 5) {
+          return res.status(400).json({ 
+            success: false,
+            error: `Вопрос ${q} обязателен и должен быть от 1 до 5` 
+          });
+        }
+        
+        // Сохраняем преобразованное значение
+        formattedAnswers[q] = value;
+      }
+    }
+    
+    // Добавляем голос (метод сам рассчитает ИКОП и заполнит метаданные)
+    const response = await poll.addVote(userId, {
+      answers: formattedAnswers,
+      comment: comment || ''
+    });
+    
+    // Обновляем статистику пользователя
+    if (user) {
+      // Добавляем опрос в список участия
+      if (!user.polls_participated.includes(pollId)) {
+        user.polls_participated.push(pollId);
+      }
+      
+      // Увеличиваем счётчик голосований
+      if (typeof user.incrementVotes === 'function') {
+        await user.incrementVotes();
+      } else {
+        user.votes_count = (user.votes_count || 0) + 1;
+        await user.save({ validateModifiedOnly: true });
+      }
+      
+      // Начисляем баллы за участие (только студентам)
+      if (user.role === 'student') {
+        let points = 10; // базовые баллы за голосование
+        
+        // Дополнительные баллы за развёрнутый комментарий
+        if (comment && comment.trim().length > 20) {
+          points += 5;
+        }
+        
+        if (typeof user.addPoints === 'function') {
+          await user.addPoints(points, `Участие в опросе: ${poll.title}`);
+        } else {
+          // Фоллбек для старых моделей
+          user.points = (user.points || 0) + points;
+          if (user.student_data) {
+            user.student_data.points = user.points;
+          }
+          await user.save({ validateModifiedOnly: true });
+        }
+      }
+    }
+    
+    res.json({ 
+      success: true, 
+      message: 'Голос учтён',
+      ikop: response.ikop,
+      points_earned: user.role === 'student' ? (comment && comment.trim().length > 20 ? 15 : 10) : 0,
+      new_total_points: user.role === 'student' ? user.points : 0
+    });
+  } catch (error) {
+    console.error('submitVote error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: error.message || 'Ошибка отправки голоса' 
     });
   }
 };
@@ -1710,9 +2071,16 @@ exports.getPollAnalytics = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Опрос не найден' });
     }
     
-    // Проверка прав (только создатель или админ может видеть аналитику)
-    if (req.user && poll.creator_id.toString() !== req.user.userId.toString() && req.user.role !== 'admin') {
-      return res.status(403).json({ success: false, message: 'Нет доступа' });
+    // Проверка: студент, который уже проголосовал, может видеть общую статистику
+    const isCreator = req.user && poll.creator_id.toString() === req.user.userId.toString();
+    const isAdmin = req.user && req.user.role === 'admin';
+    const hasVoted = req.user && poll.voted_users && poll.voted_users.some(
+      id => id.toString() === req.user.userId.toString()
+    );
+    
+    // Доступ: создатель, админ, или студент, который уже проголосовал
+    if (!isCreator && !isAdmin && !hasVoted) {
+      return res.status(403).json({ success: false, message: 'Нет доступа. Сначала пройдите опрос.' });
     }
     
     const result = await analyticsService.analyzePollResults(pollId);
@@ -1866,6 +2234,331 @@ exports.getMyFeedbackSummary = async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Ошибка при получении аналитики' 
+    });
+  }
+};
+
+/**
+ * Создать новый опрос (lesson_review или custom)
+ * POST /api/polls/new
+ */
+exports.createNewPoll = async (req, res) => {
+  try {
+    const { pollType, lessonContext, title, description, questions, target_groups, technicalIssuesEnabled } = req.body;
+    const userId = req.user.userId;
+
+    if (!pollType || !['lesson_review', 'custom'].includes(pollType)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Неверный тип опроса. Допустимые: lesson_review, custom'
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Пользователь не найден' });
+    }
+
+    const now = new Date();
+    const defaultDeadline = new Date(now.getTime() + DEFAULT_DEADLINE_HOURS * 3600 * 1000);
+
+    let pollData = {
+      creator_id: userId,
+      creator_role: user.role,
+      type: 'form',
+      pollType,
+      status: 'active',
+      start_date: now,
+      end_date: req.body.end_date ? new Date(req.body.end_date) : defaultDeadline,
+      target_groups: target_groups || [],
+      is_anonymous: req.body.is_anonymous !== false,
+      reward_points: req.body.reward_points || 5
+    };
+
+    // ======== ОПРОС ПОСЛЕ ПАРЫ (lesson_review) ========
+    if (pollType === 'lesson_review') {
+      if (!lessonContext || !lessonContext.subject || !lessonContext.teacher) {
+        return res.status(400).json({
+          success: false,
+          message: 'Для опроса после пары обязательны: subject, teacher в lessonContext'
+        });
+      }
+
+      // Проверяем, существует ли уже опрос для этой пары
+      const existingPoll = await Poll.findOne({
+        pollType: 'lesson_review',
+        'lessonContext.subject': lessonContext.subject,
+        'lessonContext.teacher': lessonContext.teacher,
+        'lessonContext.date': lessonContext.date,
+        status: { $ne: 'deleted' }
+      }).lean();
+
+      if (existingPoll) {
+        return res.status(200).json({
+          success: true,
+          message: 'Опрос уже существует для этой пары',
+          poll: existingPoll,
+          isExisting: true
+        });
+      }
+
+      // Стандартные 5 вопросов + комментарий (ФИКСИРОВАННЫЕ)
+      const standardQuestions = [
+        {
+          id: 'q1_relevance',
+          text: 'Насколько актуальна тема для твоей будущей работы?',
+          type: 'rating',
+          scale: 5,
+          weight: 0.25,
+          block: 'content',
+          required: true,
+          labels: { min: 'Совсем не актуально', max: 'Очень актуально' }
+        },
+        {
+          id: 'q2_clarity',
+          text: 'Насколько понятно объяснили материал?',
+          type: 'rating',
+          scale: 5,
+          weight: 0.30,
+          block: 'content',
+          required: true,
+          labels: { min: 'Непонятно', max: 'Очень понятно' }
+        },
+        {
+          id: 'q3_practice',
+          text: 'Достаточно ли практики/примеров?',
+          type: 'rating',
+          scale: 5,
+          weight: 0.20,
+          block: 'content',
+          required: true,
+          labels: { min: 'Очень мало', max: 'Достаточно' }
+        },
+        {
+          id: 'q4_engagement',
+          text: 'Насколько преподаватель смог заинтересовать и вовлечь?',
+          type: 'rating',
+          scale: 5,
+          weight: 0.15,
+          block: 'methodology',
+          required: true,
+          labels: { min: 'Совсем не вовлек', max: 'Очень вовлек' }
+        },
+        {
+          id: 'q5_organization',
+          text: 'Как оцениваешь организацию пары (структура, темп)?',
+          type: 'rating',
+          scale: 5,
+          weight: 0.10,
+          block: 'methodology',
+          required: true,
+          labels: { min: 'Плохо', max: 'Отлично' }
+        },
+        {
+          id: 'q6_comment',
+          text: 'Что понравилось? Что улучшить?',
+          type: 'text',
+          weight: 0,
+          block: 'other',
+          required: false,
+          maxLength: 500
+        }
+      ];
+
+      pollData = {
+        ...pollData,
+        title: `${lessonContext.subject}${lessonContext.topic ? ' - ' + lessonContext.topic : ''}`,
+        description: `${lessonContext.teacher}${lessonContext.date ? ' • ' + new Date(lessonContext.date).toLocaleDateString('ru-RU') : ''}`,
+        lessonContext: {
+          ...lessonContext,
+          date: lessonContext.date ? new Date(lessonContext.date) : null
+        },
+        questions: standardQuestions,
+        subject_name: lessonContext.subject,
+        teacher_name: lessonContext.teacher,
+        lesson_date: lessonContext.date ? new Date(lessonContext.date) : null,
+        lesson_time: lessonContext.time || null,
+        technicalIssues: {
+          enabled: technicalIssuesEnabled !== false,
+          options: ['Проблемы с техникой', 'Проблемы с аудиторией', 'Другое']
+        },
+        show_results: 'after_vote',
+        minResponsesForResults: 3
+      };
+    }
+
+    // ======== КАСТОМНЫЙ ОПРОС (custom) ========
+    else if (pollType === 'custom') {
+      if (!title || !questions || questions.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'Для кастомного опроса обязательны: title и questions'
+        });
+      }
+
+      // Валидация вопросов
+      const validTypes = ['rating', 'yes_no', 'choice', 'text'];
+      const invalidQuestions = questions.filter(q => !validTypes.includes(q.type));
+      
+      if (invalidQuestions.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: `Недопустимые типы вопросов. Допустимые: ${validTypes.join(', ')}`
+        });
+      }
+
+      // Проверка, что для choice указаны options
+      const choiceWithoutOptions = questions.filter(q => q.type === 'choice' && (!q.options || q.options.length === 0));
+      if (choiceWithoutOptions.length > 0) {
+        return res.status(400).json({
+          success: false,
+          message: 'Для вопросов типа choice необходимо указать options'
+        });
+      }
+
+      pollData = {
+        ...pollData,
+        title,
+        description: description || '',
+        questions: questions.map((q, idx) => ({
+          id: q.id || `q${idx + 1}`,
+          text: q.text,
+          type: q.type,
+          required: q.required !== false,
+          scale: q.type === 'rating' ? 5 : undefined,
+          options: q.options || [],
+          maxLength: q.type === 'text' ? (q.maxLength || 500) : undefined
+        })),
+        show_results: req.body.show_results || 'after_vote',
+        minResponsesForResults: req.body.minResponsesForResults || 0
+      };
+    }
+
+    // Создаем опрос
+    const poll = new Poll(pollData);
+    await poll.save();
+
+    console.log(`✅ Создан опрос типа ${pollType}:`, poll._id);
+    console.log('   target_groups:', poll.target_groups);
+    console.log('   target_faculties:', poll.target_faculties);
+    console.log('   visibility:', poll.visibility);
+
+    res.status(201).json({
+      success: true,
+      message: 'Опрос успешно создан',
+      poll
+    });
+
+  } catch (error) {
+    console.error('Ошибка создания опроса:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Не удалось создать опрос',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Проголосовать в опросе (с расчетом ИКОП для lesson_review)
+ * POST /api/polls/:id/vote-new
+ */
+exports.voteInNewPoll = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { answers, technical_issues } = req.body;
+    const userId = req.user.userId;
+
+    const poll = await Poll.findById(id);
+    if (!poll) {
+      return res.status(404).json({ success: false, message: 'Опрос не найден' });
+    }
+
+    // Проверка, что пользователь еще не голосовал
+    if (poll.hasVoted(userId)) {
+      return res.status(400).json({ success: false, message: 'Вы уже проголосовали' });
+    }
+
+    // Проверка, что опрос активен
+    if (!poll.isActive()) {
+      return res.status(400).json({ success: false, message: 'Опрос завершен' });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Пользователь не найден' });
+    }
+
+    // Валидация ответов
+    const requiredQuestions = poll.questions.filter(q => q.required);
+    const missingAnswers = requiredQuestions.filter(q => !answers[q.id]);
+    
+    if (missingAnswers.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Необходимо ответить на все обязательные вопросы',
+        missing: missingAnswers.map(q => q.text)
+      });
+    }
+
+    // Расчет ИКОП для lesson_review
+    let ikop = null;
+    if (poll.pollType === 'lesson_review') {
+      const { calculateIKOP } = require('../services/ikopService');
+      ikop = calculateIKOP(answers, poll.questions);
+    }
+
+    // Метаданные пользователя для срезов
+    const userMetadata = {
+      faculty: user.faculty || 'unknown',
+      faculty_name: user.faculty_name || user.faculty || 'Неизвестно',
+      program: user.program || 'unknown',
+      program_name: user.program_name || user.program || 'Неизвестно',
+      course: user.course || 0,
+      group_id: user.group_id || user.group || 'unknown',
+      group_name: user.group_name || user.group || 'Неизвестно'
+    };
+
+    // Добавляем ответ
+    poll.responses.push({
+      user_id: userId,
+      answers,
+      technical_issues: technical_issues || { has_issues: false },
+      ikop,
+      ...userMetadata,
+      user_faculty: userMetadata.faculty,
+      user_faculty_name: userMetadata.faculty_name,
+      user_program: userMetadata.program,
+      user_program_name: userMetadata.program_name,
+      user_course: userMetadata.course,
+      user_group: userMetadata.group_id.toString(),
+      user_group_name: userMetadata.group_name,
+      submitted_at: new Date()
+    });
+
+    poll.voted_users.push(userId);
+    poll.total_votes = poll.responses.length;
+    await poll.save();
+
+    console.log(`✅ Пользователь ${userId} проголосовал в опросе ${id}${ikop !== null ? `, ИКОП: ${ikop}` : ''}`);
+
+    res.json({
+      success: true,
+      message: 'Голос принят',
+      ikop,
+      poll: {
+        _id: poll._id,
+        title: poll.title,
+        total_votes: poll.total_votes
+      }
+    });
+
+  } catch (error) {
+    console.error('Ошибка голосования:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Не удалось отправить голос',
+      error: error.message
     });
   }
 };
